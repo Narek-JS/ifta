@@ -1,0 +1,644 @@
+@import "index";
+
+.mainBanner {
+  width: 100%;
+  min-height: 625px;
+  padding-top: 150px;
+  padding-bottom: 10px;
+  margin-top: -150px;
+  position: relative;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  .infoContent {
+    gap: 15px;
+    width: 60%;
+    max-width: 640px;
+    padding: 16px 69px 10px;
+    background: rgba(7,39,101,.91);
+    .infoItem {
+      svg {
+        min-width: 44px;
+      }
+    }
+  }
+}
+
+.registerForm {
+  width: 37%;
+  max-width: 340px;
+
+  .registerTitle {
+    height: 40px;
+    background-color: $secondary;
+    padding: 8px;
+  }
+
+  form {
+    height: 100%;
+    padding: 20px;
+    gap: 16px;
+    background: #0727658C;
+    .inputField {
+      .helper {
+        font-size: 14px;
+        color: $white;
+      }
+
+      input {
+        font-size: 12px;
+      }
+    }
+
+    .registerBtn {
+      margin-top: 5px;
+      width: 100% !important;
+
+      svg {
+        margin-left: 2px;
+
+        path {
+          transition: .3s;
+        }
+      }
+
+      &:hover {
+        svg path {
+          fill: $white;
+        }
+      }
+    }
+  }
+}
+
+.shops {
+  padding-bottom: 50px;
+  overflow: hidden;
+
+  .shopsMain {
+    position: relative;
+
+    .topPart {
+      .texts {
+        width: 60%;
+        padding-top: 50px;
+
+        .textsList {
+          padding: 20px;
+          background-color: $grayBG;
+          flex: 50px;
+          height: 275px;
+          overflow-y: auto;
+          @media screen and (max-width: 768px) {
+            overflow-y: initial;
+            height: initial;
+          }
+        }
+      }
+
+      .iftaOffer {
+        border-radius: 0 0 0 20px;
+        overflow: hidden;
+        width: 40%;
+        max-width: 444px;
+        background-color: $grayBG;
+        transition: .3s;
+
+        &:hover {
+          border-radius: 0 120px 20px 0;
+
+          .imgArea {
+            border-radius: 0 120px 0 0;
+          }
+
+          .offerEnd {
+            border-radius: 30px 0 20px 0;
+          }
+        }
+
+        .imgArea {
+          width: 90%;
+          margin-left: auto;
+          border-radius: 0 0 0 120px;
+          overflow: hidden;
+          transition: .3s;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .smallLogoPart {
+          padding: 1px 30px;
+
+          img {
+            width: 110px;
+            height: 110px;
+          }
+        }
+
+        .offerEnd {
+          border-radius: 0 30px 0 20px;
+          background-color: $secondary;
+          padding: 5px 15px;
+          transition: .3s;
+        }
+      }
+    }
+
+    .bottomPart {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      column-gap: 20px;
+      row-gap: 30px;
+
+      .textCard, .solutionCard {
+        padding: 20px;
+        color: $primary;
+        background-color: $grayBG;
+        line-height: 28px;
+        width: 31%;
+      }
+
+      .solutionCard {
+        border: 1px solid $secondary;
+      }
+    }
+  }
+}
+
+.helpSection {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  padding-top: 30px;
+
+  .helpTitle {
+    width: fit-content;
+
+    h1 {
+      font-size: 3.336vw;
+    }
+
+    svg {
+      width: 14.5vw;
+      margin-left: -14%;
+      margin-bottom: -30px;
+    }
+  }
+
+  .callUs {
+    width: fit-content;
+    padding: 11px;
+    background: linear-gradient(104.04deg, rgba(7, 39, 101, 0.48) 5.31%, rgba(253, 253, 255, 0.12) 49.67%, rgba(255, 191, 0, 0.44) 92.96%);
+    transition: .3s;
+
+    &:hover {
+      transform: translateY(-10px);
+      border-radius: 5px;
+      background: linear-gradient(104.04deg, rgba(255, 191, 0, 0.44) 5.31%, rgba(253, 253, 255, 0.12) 49.67%, rgba(7, 39, 101, 0.48) 92.96%);
+      color: $white !important;
+
+      svg path {
+        transition: .3s;
+      }
+
+      svg path {
+        fill: $white;
+      }
+    }
+  }
+}
+
+
+.moreInfo {
+  padding-top: 20px;
+  padding-bottom: 40px;
+
+  .moreInfoCards {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 25px;
+    overflow: hidden;
+
+    .moreInfoCard {
+      width: calc((100% - 50px) / 3);
+      padding: 20px;
+      border: 1px solid $secondary;
+      background-color: $grayBG;
+      transition: all 0.45s ease;
+      background-size: 100% 200%;
+      background-position: 0 -100%;
+      background-image: linear-gradient(to top, transparent 50%, $primary60 50%);
+
+      &:hover {
+        background-position: 0 0;
+
+        .iconTitle svg circle {
+          stroke: #FFFFFF;
+        }
+
+        .iconTitle h2, & > p {
+          color: $white !important;
+        }
+      }
+
+      .iconTitle h2, & > p {
+        transition: all 0.45s ease;
+      }
+    }
+  }
+}
+
+
+///////////  FAQwrapper section @###################
+.faqSection {
+  padding-bottom: 20px;
+
+  .centerSquares.top {
+    margin-top: 30px;
+  }
+
+}
+
+.faqsContainer {
+  .expandIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg path {
+      stroke: $secondary;
+    }
+  }
+
+  .faqSquare {
+    min-width: 16px;
+    min-height: 16px;
+    background-color: $secondary;
+
+    &.red {
+      background-color: #d32f2f !important;
+    }
+
+    &.refund {
+      background-color: #001D4A !important;
+    }
+    
+    &.dispute {
+      background-color: #F59720 !important;
+    }
+
+    &.completed {
+      background-color: #00B74A !important;
+    }
+  }
+
+  .MuiPaper-root {
+    box-shadow: none !important;
+    border-bottom: 2px solid rgba(7, 39, 101, 0.2);
+
+    &.Mui-expanded {
+      margin: 0 !important;
+    }
+  }
+
+  .MuiAccordion-root {
+    background-color: $white;
+
+    &::before {
+      display: none;
+    }
+
+    .MuiAccordionSummary-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .MuiAccordionSummary-root {
+      background-color: $white;
+      padding: 0 10px;
+      border: none;
+      box-shadow: none;
+      color: rgba(0, 12, 51, 0.8);
+
+      &.Mui-expanded {
+        color: $white;
+      }
+    }
+
+    .MuiAccordionDetails-root {
+      padding: 0 30px 20px;
+      line-height: 24px;
+    }
+  }
+}
+.historyWrapper {
+  .MuiPaper-root {
+    &.Mui-expanded {
+      margin-bottom: 30px !important;
+    }
+  }
+}
+///////////   LATEST ARTICLES @###############
+
+.latestArticles {
+  padding-top: 30px;
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  > h1 {
+    text-align: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .container {
+    width: 100%;
+    gap: 60px;
+  }
+
+  .posts {
+    width: 100%;
+
+    .self {
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .nth-blog {
+      width: 100%;
+      max-width: 304px;
+    }
+  }
+}
+
+
+////////////// MEDIAS @#############
+
+@media screen and (max-width: 1380px) {
+  .latestArticles {
+    .container {
+      flex-direction: column;
+
+      .posts {
+        .self {
+          justify-content: center;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .mainBanner {
+    height: unset;
+    min-height: unset;
+    padding-top: 90px;
+    margin-top: -90px;
+
+    .infoContent {
+      padding: 20px;
+    }
+  }
+  .shops {
+    .shopsMain {
+      .topPart {
+        flex-direction: column;
+        align-items: center;
+
+        .texts {
+          width: 100%;
+        }
+
+        .iftaOffer {
+          width: 100%;
+        }
+      }
+
+      .bottomPart {
+        gap: 15px;
+
+        .textCard, .solutionCard {
+          width: calc((100% - 30px) / 3);
+        }
+      }
+    }
+  }
+  .helpSection {
+    display: none;
+  }
+  .moreInfo {
+    .moreInfoCards {
+      gap: 15px;
+
+      .moreInfoCard {
+        width: calc((100% - 30px) / 3);
+      }
+    }
+  }
+  .faqSection {
+    .faqsContainer {
+      .MuiAccordion-root {
+        .MuiAccordionSummary-root {
+          //height: 50px !important;
+          min-height: 40px !important;
+        }
+      }
+    }
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .mainBanner {
+    .infoContent {
+      width: 100%;
+      max-width: 100%;
+      padding: 10px 38px;
+
+      .infoItem {
+        svg {
+          width: 24px;
+          min-width: 24px;
+          height: 24px;
+        }
+
+        h1 {
+          font-size: 20px;
+          margin-bottom: 0;
+        }
+
+        h3, p {
+          font-size: 14px;
+        }
+      }
+
+      & > p {
+        font-size: 10px;
+      }
+    }
+
+    .registerForm {
+      display: none;
+    }
+  }
+  .shops {
+    padding-bottom: 0;
+
+    .shopsMain {
+      padding-top: 20px;
+
+      .squares {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 10px;
+
+        .largeSquare {
+          width: 94px;
+          height: 10px;
+          position: unset;
+        }
+
+        .smallSquare {
+          position: unset;
+          margin-bottom: 20px;
+        }
+
+        &.last {
+          margin-top: 20px;
+
+          .smallSquare {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .topPart {
+        .texts {
+          padding-top: 10px;
+
+          & > h1, & > h3, & > p {
+            margin-bottom: 10px;
+            text-align: center;
+          }
+
+          & > h1 {
+            font-size: 18px;
+          }
+
+          & > h3 {
+            font-size: 16px;
+          }
+
+          & > p {
+            font-size: 12px;
+          }
+        }
+
+        .lists {
+          flex-direction: column;
+
+          .textsList {
+            width: 100%;
+          }
+        }
+      }
+
+      .bottomPart {
+        gap: 20px;
+
+        .textCard {
+          display: none;
+        }
+
+        .solutionCard {
+          width: 100%;
+          padding: 15px 20px;
+        }
+      }
+    }
+  }
+  .moreInfo {
+    padding-top: 10px;
+    padding-bottom: 15px;
+
+    .centerSquares {
+      display: none;
+    }
+
+    .infoHeaders {
+      h1 {
+        font-size: 18px;
+      }
+
+      h3 {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+    }
+
+    .moreInfoCards {
+      flex-direction: column;
+
+      .moreInfoCard {
+        width: 100%;
+        padding: 15px 20px;
+      }
+    }
+  }
+
+  .homePage {
+    .faqSection {
+      padding-bottom: 0;
+
+      .faqHeaders, .faqsContainer, .normalLink {
+        display: none;
+      }
+    }
+  }
+
+  .faqsContainer {
+    .MuiAccordion-root {
+      .MuiAccordionSummary-root {
+        padding-left: 20px;
+        padding-right: 20px;
+
+        h1 {
+          font-size: 16px !important;
+        }
+
+        .expandIcon {
+          width: 28px;
+          height: 28px;
+        }
+      }
+
+      .MuiAccordionDetails-root {
+        padding: 10px !important;
+
+        p {
+          font-size: 14px !important;
+        }
+      }
+    }
+  }
+  .latestArticles{
+    display: none;
+  }
+}
+
+
+
+
+
+
+

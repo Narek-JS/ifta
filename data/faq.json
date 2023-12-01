@@ -1,0 +1,26 @@
+{
+  "title": "FAQ's",
+  "description": "Frequently Asked Questions",
+  "data": [
+    {
+      "question": "Who Qualifies for the IFTA?",
+      "answer": "The IFTA only applies to vehicles that are a certain size or weight. If your vehicle has three or more axles, then it qualifies for the IFTA, regardless of its weight. If your vehicle has two axles and weighs more than 26,000 pounds (or it's part of a combination that exceeds the same weight threshold), then it qualifies for the IFTA.\n\nNotably, the IFTA only applies to commercial motor vehicles (CMVs). Therefore, if you have a large vehicle, like an RV, that meets the weight requirement, you don't have to sign up for the IFTA."
+    },
+    {
+      "question": "Should I Get an IFTA License?",
+      "answer": "IFTA licenses are a great idea for any trucker who regularly operates on an interstate basis. This way, you can file just one return for your vehicle, as opposed to having to file your fuel tax returns individually across each state or province you haul in. Furthermore, if you have multiple trucks, you can simplify all of their returns into just one!"
+    },
+    {
+      "question": "Is There a Good Alternative to the IFTA?",
+      "answer": "Some people decide that they would prefer not to get an IFTA license. Usually, this is because they only leave their base jurisdiction a few times per year, making the IFTA an expensive investment with little return. If you're one of these people, then you should consider getting a fuel tax permit for each of the states that you'll travel through. These permits allow you to be exempt from the usual fuel tax requirements for a small flat rate."
+    },
+    {
+      "question": "What Is a Base Jurisdiction?",
+      "answer": "Your base jurisdiction is the state or province where your vehicle is registered. So, if your business and truck are registered in Arkansas, then Arkansas is your base state."
+    },
+    {
+      "question": "Which Jurisdictions Are Members of IFTA?",
+      "answer": "The 48 contiguous states of the United States and the 10 Canadian provinces are members of IFTA. Alaska, Hawaii, and the Canadian territories (the Northwestern Territories, Yukon, and Nunavut) are not members."
+    }
+  ]
+}
