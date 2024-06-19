@@ -1,0 +1,1625 @@
+@import "index";
+
+///////////  Common IFTA form   @#############
+
+.formPage {
+  min-height: calc(100vh - 150px);
+  padding-top: 20px;
+  padding-bottom: 20px;
+
+  .formPageCard {
+    padding-bottom: 20px;
+    box-shadow: -4px -2px 10px rgba(7, 39, 101, 0.15), 4px 4px 10px rgba(7, 39, 101, 0.15);
+
+    .formTitle {
+      padding: 13px;
+    }
+
+    .stepController {
+      padding: 20px 4%;
+      padding-top: 42px;
+
+      .stepItem {
+        //width: 22%;
+
+        .stepIcon {
+          width: 60px;
+          height: 48px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border: 2px solid $secondary;
+          background-color: $primary40;
+        }
+
+        .stepName {
+          color: $primary;
+          white-space: nowrap;
+        }
+
+        .stepDesc {
+          margin-top: 10px;
+          color: $primary40;
+        }
+
+        &.active {
+          .stepIcon {
+            background-color: $secondary;
+
+            svg path {
+              fill: $white;
+            }
+          }
+
+          .stepName, .stepDesc {
+            color: $secondary;
+          }
+        }
+
+        &.completed {
+          .stepIcon {
+            background-color: #072765;
+          }
+
+          .stepDesc {
+            color: #00B74A;
+          }
+        }
+      }
+
+      .stepTransition {
+        width: 18%;
+        margin-top: 14px;
+        color: #072765;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & > span {
+          &:first-of-type {
+            transform: rotate(45deg) translate(1px, -0.5px);
+            margin-right: -1px;
+          }
+
+          &:last-of-type {
+            transform: rotate(-90deg) translate(1px, -3px);
+          }
+        }
+
+        & > div {
+          width: 100%;
+          max-width: 150px;
+          border-bottom: 2px solid #072765;
+        }
+      }
+    }
+
+    .formSection {
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
+    .subTitle {
+      padding: 8px;
+    }
+
+    .formRegister {
+
+      form {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+    }
+
+    .ownerOfficer {
+      .ownerOfficerMain {
+        position: relative;
+        padding: 0 20px;
+
+        .inputField {
+          width: calc((100% - 60px) / 4);
+          max-width: 280px;
+        }
+
+        .normalBtn.MuiButtonBase-root:not(.confirmActions .normalBtn.MuiButtonBase-root) {
+          width: calc((100% - 60px) / 4);
+          max-width: 280px;
+
+          @media screen and (max-width: 768px) {
+            max-width: 100%;
+          }
+        }
+      }
+
+      .inputsContainer {
+        padding: 10px 0 0;
+      }
+    }
+
+    .others {
+      .othersMain {
+        padding: 10px 20px;
+
+        .inputField {
+          width: calc((100% - 63px) / 4);
+        }
+
+        .inputFile {
+          width: calc((100% - 60px) / 3);
+        }
+      }
+    }
+  }
+
+  .inputField {
+    width: 100%;
+    max-width: 280px;
+
+    @media screen and (max-width: 768px) {
+      max-width: 100%;
+    }
+
+    input {
+      border: 1px solid $secondary;
+
+      &:-webkit-autofill,
+      &:-webkit-autofill:hover,
+      &:-webkit-autofill:focus,
+      &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px white inset !important;
+      }
+    }
+  }
+
+  .formMessage {
+    padding: 10px 15px;
+    line-height: 24px;
+    background-color: #FFBF0026;
+    max-width: 650px;
+    font-size: 14px;
+
+    &.w100 {
+      max-width: 100%;
+    }
+
+    &.w60 {
+      max-width: 60%;
+    }
+
+    a {
+      margin: 0 5px;
+      display: inline-block;
+      color: #184546;
+      text-decoration: underline;
+      font-weight: 700;
+      letter-spacing: .6px;
+    }
+  }
+
+  .checkIRP {
+    margin-bottom: 10px;
+
+    form {
+      .fieldArea {
+        width: 100%;
+        max-width: 280px;
+      }
+
+      .react-reveal {
+        width: 100%;
+      }
+    }
+  }
+
+  .radioGroup {
+    label, input {
+      cursor: pointer;
+    }
+
+    input {
+      width: 16px;
+      height: 16px;
+      min-width: 16px;
+      min-height: 16px;
+      accent-color: #b48a00;
+    }
+  }
+
+  .addUSDOT {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    .usdotValues {
+      display: flex;
+      gap: 20px;
+
+      .block {
+        min-height: 90px;
+        width: 100%;
+        padding: 10px;
+        background: #F4F7FB;
+        border-radius: 0px 5px 5px 0px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        gap: 10px;
+
+        &:first-child {
+          flex-basis: 30%;
+        }
+
+        &:last-child {
+          flex-basis: 42%;
+        }
+
+        .title {
+          color: #000000;
+          font-weight: 700;
+          font-size: 18px;
+        }
+
+        .wrapperContent {
+          display: flex;
+          align-items: center;
+          gap: 25px;
+          @media screen and (max-width: 450px) {
+            gap: 10px;
+            flex-direction: column;
+            align-items: flex-start;
+          }
+        }
+
+        .subTitle {
+          color: rgba(0, 0, 0, 0.6);
+          font-weight: 400;
+          padding: 0;
+          font-size: 14px;
+
+          span {
+            font-size: 18px;
+            color: #000000;
+          }
+        }
+      }
+      @media screen and (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+
+    .blockEin {
+      .block {
+        min-height: 90px;
+        padding: 7px 10px 10px 10px;
+        &:last-child {
+          padding-top: 3px;
+        }
+      }
+    }
+    
+    .formMessage, form .react-reveal {
+      width: 100%;
+      max-width: 580px;
+      position: relative;
+      .error {
+        position: absolute;
+        right: 0;
+        font-size: 12px;
+        top: 0;
+        color: red;
+        letter-spacing: 1px;
+
+        @media screen and (max-width: 768px) {
+          right: initial;
+          top: initial;
+          bottom: -16px;
+        }
+      }
+    }
+  }
+
+  .confirmActions {
+    margin-left: auto;
+    width: 100%;
+    max-width: 279px;
+  }
+
+  .actionsBtns {
+    button {
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+
+      &:hover {
+      }
+
+      &.disableBtn {
+        pointer-events: none;
+        user-select: none;
+
+        svg circle {
+          fill: gray;
+        }
+      }
+    }
+  }
+
+  .dataTable {
+    padding-top: 20px;
+
+    table {
+      width: 100%;
+      margin-bottom: 20px;
+      border-collapse: collapse;
+      border-color: #07276566;
+
+      thead {
+        background-color: #072765;
+        color: $white;
+
+        td {
+          border-right: 1px solid $white;
+          &:last-of-type {
+            border-right: none;
+          }
+        }
+
+        .outline td {
+          outline: 1px solid $white;
+          border-right: initial;
+        }
+      }
+
+      td {
+        text-align: center;
+        height: 40px;
+      }
+
+      thead td {
+        &:first-of-type {
+          // border-left: 1px solid $primary; // check browser this line should be only for chrome
+        }
+        &:nth-child(2) {
+          max-width: 50px;
+        }
+        &:last-of-type {
+          // border-right: 1px solid $primary; // check browser this line should be only for chrome
+        }
+      }
+
+      .outline td {
+        &:first-of-type {
+          border-left: initial;
+          outline: 1px solid #07276566
+        }
+        &:last-of-type {
+          border-right: initial;
+          outline: 1px solid #07276566
+        }
+      }
+
+      tbody {
+        font-size: 12px;
+        color: $primary;
+
+        td {
+          background-color: $white;
+          outline: 1px solid #07276566; // check Browser { chrom: border, mozila: outline }
+        }
+
+        .outline,
+        .outline td {
+          border: initial;
+          outline: 1px solid #07276566;
+        }
+
+        tr td:last-of-type {
+          border-left: none;
+        }
+
+        tr:not(:last-of-type) td:last-of-type {
+          border-bottom: none;
+        }
+      }
+
+      tfoot {
+        background-color: #072765;
+        color: $white;
+        font-size: 20px;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .steBtns {
+    padding: 0 20px;
+
+    .nextStep {
+      margin-left: auto;
+      background-color: #FFBF00;
+    }
+  }
+
+  .questionnaireMain {
+    padding-left: 20px;
+    padding-right: 20px;
+
+    .questionArea {
+      padding-top: 20px;
+      @media screen and (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+    }
+
+    .errMessage {
+      margin-top: 5px;
+    }
+
+    .storageItem {
+      align-items: flex-end;
+      @media screen and (max-width: 390px) {
+        align-items: flex-start;
+      }
+      .normalBtn {
+        width: 100%;
+        max-width: 279px;
+      }
+    }
+
+    .checkItem {
+      .searchInput {
+        border: none;
+        background-color: transparent;
+        line-height: 24px;
+        color: $primary;
+
+        &::placeholder {
+          color: $primary60;
+        }
+        
+      }
+      .tableName {
+        padding-top: 12px;
+        font-size: 18px;
+      }
+      .checksContainer {
+        padding: 20px 0;
+        border-bottom: 2px solid rgba(7, 39, 101, 0.2);
+        gap: 12px;
+        justify-content: start;
+
+        label {
+          width: 180px;
+          display: flex;
+          flex: 1 1 1;
+          align-items: center;
+          gap: 10px;
+          cursor: pointer;
+          margin-bottom: 10px;
+          line-height: 1.3;
+
+          @media screen and (max-width: 768px) {
+            flex: 1 auto;
+            width: 150px;
+          }
+
+          @media screen and (max-width: 390px) {
+            width: 120px;
+          }
+
+          input {
+            width: 16px;
+            height: 16px;
+            min-width: 16px;
+            min-height: 16px;
+            accent-color: $secondary;
+            background-color: $white;
+            color: $white;
+          }
+        }
+      }
+    }
+  }
+
+  .normalBtn, .normalBtn.MuiButtonBase-root {
+    min-width: 135px;
+
+    &.prevStep {
+      svg {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+
+  ///////////  Payment details @############
+
+
+  .userInfo {
+    padding: 0 20px 20px;
+    .userInfoArea {
+      background-color: $white;
+      padding: 20px;
+
+      .initialItem {
+        position: relative;
+
+        .inputField {
+          position: initial;
+        }
+      }
+    }
+
+    .initialItem {
+      .inputField {
+        max-width: 50px;
+        min-width: 50px;
+        @media screen and (max-width: 768px) {
+            max-height: 45px;
+        }
+
+        input {
+          padding: 10px 4px !important;
+          text-align: center;
+        }
+
+        .err-message {
+          white-space: nowrap;
+          left: 0;
+        }
+      }
+
+      .initialRule {
+        position: relative;
+
+        &:before {
+          content: "• ";
+          position: absolute;
+          left: -15px;
+        }
+      }
+    }
+  }
+
+  .userDataItem {
+    border: 1px solid #FFBF00;
+    border-radius: 5px;
+    padding: 5px;
+    min-height: 130px;
+    width: 100%;
+    @media screen and (max-width: 768px) {
+      min-height: 190px;
+    }
+    &.signatureArea {
+      position: relative;
+      user-select: none;
+
+      .MuiButtonBase-root.normalBtn {
+        width: 100%;
+        max-width: 100%;
+        height: 25px !important;
+        font-size: 14px;
+      }
+
+      .errMessage {
+        position: absolute;
+        left: 0;
+        bottom: -20px;
+      }
+      @media screen and (max-width: 768px) {
+        canvas {
+          border: 1px solid #0000005e;
+          border-radius: 5px;
+        }
+      }
+    }
+  }
+
+  .conditions {
+    white-space: nowrap;
+    width: 100%;
+    max-width: 290px;
+  }
+}
+
+.borderDashed {
+  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='rgb(255, 191, 0)' strokeWidth='2' stroke-opacity='1' stroke-dasharray='20%2c 20' stroke-dashoffset='20' stroke-linecap='round'/%3e%3c/svg%3e");
+}
+
+.borderDashedBottom {
+  background-image: linear-gradient(to right, $secondary 50%, rgba(255, 255, 255, 0) 0%);
+  background-position: bottom;
+  background-size: 40px 1px;
+  background-repeat: repeat-x;
+}
+
+.carrierInfo {
+  padding: 0 20px 10px;
+
+  .carrierInfoCard {
+    padding: 20px;
+
+    & > .borderDashed {
+      padding-top: 20px;
+      overflow: hidden;
+
+      @media screen and (max-width: 768px) {
+        max-height: initial !important;
+        overflow-y: initial !important;
+      }
+    }
+
+    .infoContainer {
+      width: 100%;
+      padding: 15px 20px;
+      line-height: 24px;
+      column-gap: 40px;
+      row-gap: 5px;
+      &.quarterInfoContainer {
+        padding: 10px 20px;
+      }
+    }
+  }
+}
+
+
+
+.carrierTooltipRoot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: $secondary;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+}
+
+.updatedPopup {
+  .carrierTooltipRoot {
+    min-width: 25px;
+    min-height: 25px;
+    color: #000 !important;
+  }
+
+  .popUpContent {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .content {
+    color: rgba(0, 0, 0, 0.80);
+    font-weight: 400;
+    line-height: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    a {
+      text-decoration: underline;
+      color: #FFBF00;
+      display: contents;
+    }
+  }
+}
+
+.redTooltipRoot,
+.voidTooltipRoot {
+  background-color: #d32f2f !important;
+}
+
+.refundTooltipRoot {
+  background-color: #001D4A !important;
+}
+
+.disputeTooltipRoot {
+  background-color: #F59720 !important;
+}
+
+.completedTooltipRoot {
+  background-color: #00B74A !important;
+}
+
+.carrierTooltip {
+  div {
+    background-color: $secondary !important;
+    font-weight: 700;
+    font-size: 14px;
+    color: $white !important;
+    line-height: 18px;
+    @media screen and (max-width: 768px) {
+      text-align: center;
+      max-width: 245px;
+    }
+  }
+}
+
+.tooltip-wrapper {
+  position: relative;
+}
+
+.tooltip-note {
+  width: 100%;
+  width: 300px;
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  animation: appearTooltip .1s forwards;
+  padding-left: 10px;
+  @media screen and (max-width: 920px) {
+    right: 25px;
+    left: initial;
+  }
+  @media screen and (max-width: 768px) {
+    max-width: 250px;
+  }
+  @media screen and (max-width: 500px) {
+    width: 250px;
+  }
+}
+
+.tooltip-tip {
+  background-color: $secondary !important;
+  font-size: 15px;
+  color: #000 !important;
+  line-height: 18px;
+  border-radius: 5px;
+  padding: 5px 3px;
+  font-weight: 500;
+
+  @media screen and (max-width: 768px) {
+    text-align: center;
+  }
+
+  &.note-refound {
+    background-color: #00B74A !important;
+  }
+
+  &.note-void {
+    background-color: #d32f2f !important;
+  }
+
+  &.note-dispute {
+    background-color: #F59720 !important;
+  }
+
+}
+
+@keyframes appearTooltip {
+  0% {
+    opacity: 0;
+    transform: scale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cityInputFild .MuiAutocomplete-clearIndicator, 
+.zipInputFild .MuiAutocomplete-clearIndicator {
+  margin-right: 0 !important;
+}
+
+body:has(.bg-black) {
+  overflow: hidden;
+}
+
+.popupFileExample {
+  width: 100%;
+  
+  .popupHeader {
+    height: 50px;
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: #0B4777;
+    color: #FDFDFF;
+    font-size: 20px;
+    padding: 0 20px;
+  }
+
+  .popupClose {
+    position: absolute;
+    right: 20px;
+    cursor: pointer;
+    min-width: 25px;
+    min-height: 25px;
+    display: flex;
+    transition: all 0.2s;
+
+    &:hover {
+      font-size: 20px;
+      transform: scale(1.1);
+    }
+  }
+
+  .popupImage {
+    height: max-content;
+    max-height: 757px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  @media screen and (max-width: 870px) {
+    .popupFileExampleText {
+      margin-right: 60px;
+      font-size: 16px;
+    }
+
+    .popupHeader {
+      padding: 0 10px;
+    }
+  }
+
+}
+
+.updatedPopup,
+.logoutPopup {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  background: #FFF;
+  padding: 15px 25px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  gap: 15px;
+
+  img {
+    max-width: 300px;
+    max-height: 260px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  .popUpContent {
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+  }
+
+  .border-btn {
+    border: 2px solid #000;
+    width: 100%;
+    padding: 5px 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #000 !important;
+    font-weight: 700;
+  }
+
+  .fill-btn {
+    width: 100%;
+    background: #FFBF00;
+    border: 2px solid #FFBF00;
+    padding: 5px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    color: #FDFDFF;
+
+    &:hover {
+      color: #FFBF00 !important;
+      background-color: #FDFDFF;
+    }
+  }
+
+  .close-popup {
+    width: 40px;
+    height: 40px;
+    background-color: #FFBF00;
+    padding: 15px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+  }
+
+  .close-popup::after {
+    content: "";
+    width: 3px;
+    height: 55%;
+    background-color: #FFFFFF;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-135deg);
+  }
+
+  .close-popup::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 55%;
+    background-color: #FFFFFF;
+    transform: translate(-50%, -50%) rotate(135deg);
+  }
+
+  span {
+    color: #FFBF00;
+  }
+
+  @media screen and (max-width: 768px) {
+    justify-content: initial;
+    img {
+      max-width: 200px;
+      max-height: 170px;
+    }
+
+    .popUpContent {
+      font-size: 16px;
+    }
+
+    .content {
+      font-size: 14px;
+    }
+  }
+}
+
+.expiredVerifyPopup {
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  background: #FFF;
+  padding: 15px 25px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  gap: 15px;
+
+  @media screen and (max-width: 768px) {
+    padding: 15px 0px;
+  }
+
+  img {
+    max-width: 300px;
+    max-height: 260px;
+    width: 100%;
+    object-fit: contain;
+  }
+
+  .popUpContent {
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    svg {
+      min-width: 25px;
+      min-height: 25px;
+    }
+  }
+
+  .popupText {
+    color: rgba(0, 0, 0, 0.80);
+    text-align: center;
+    line-height: 24px;
+    span,
+    a {
+      color: #FFBF00;
+    }
+  }
+
+  .border-btn {
+    border: 2px solid #FFBF00;
+    width: 100%;
+    padding: 5px 0 !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: #FFBF00 !important;
+    font-weight: 700;
+  }
+
+  .fill-btn {
+    width: 100%;
+    background: #FFBF00;
+    border: 2px solid #FFBF00;
+    padding: 5px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    color: #FDFDFF;
+    &:hover {
+      color: #FFBF00 !important;
+    }
+  }
+
+  .close-popup {
+    width: 40px;
+    height: 40px;
+    background-color: #FFBF00;
+    padding: 15px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+  }
+
+  .close-popup::after {
+    content: "";
+    width: 3px;
+    height: 70%;
+    background-color: #FFFFFF;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-145deg);
+  }
+
+  .close-popup::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 3px;
+    height: 70%;
+    background-color: #FFFFFF;
+    transform: translate(-50%, -50%) rotate(145deg);
+  }
+
+  .css-1ujsas3:hover {
+    -webkit-text-decoration: initial !important;
+    text-decoration: initial !important;
+    background-color: initial !important;
+  }
+}
+
+.radioQuestion.checkIrpAccount {
+  max-width: initial;
+}
+
+.checkIRP .checkIrpAccount {
+  position: relative;
+  max-width: 280px;
+  width: 100%;
+
+  .err-message {
+    position: absolute;
+    font-size: 12px;
+    left: 5px;
+    bottom: -25px;
+    color: #ab1a17;
+    height: 20px;
+    line-height: 10px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}
+
+
+
+@media screen and (max-width: 1250px) {
+  .formPage {
+    .formPageCard {
+      .orderCreator {
+        flex-wrap: wrap;
+        justify-content: center;
+        .userDataItem {
+          width: 47%;
+          max-width: 250px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .formPage {
+    .formPageCard {
+      .addUSDOT {
+        & > form {
+          flex-direction: column;
+
+          & > div {
+            width: 100%;
+            max-width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
+
+
+@media screen and (max-width: 768px) {
+  .formPage {
+    .formPageCard {
+      .stepController {
+        overflow: hidden;
+        padding: 10px;
+
+        .stepItem:not(.active, .active+.stepTransition+.stepItem) {
+          display: none;
+        }
+
+        .stepTransition:not(.active+.stepTransition) {
+          display: none;
+        }
+
+        .active + .stepTransition + .stepItem {
+          margin-right: -100px;
+        }
+
+        .stepItem {
+          width: 40%;
+          @media screen and (max-width: 390px) {
+            width: 100%;
+          }
+
+          &.active {
+            width: auto;
+
+            @media screen and (max-width: 612px) {
+              width: min-content;
+            }
+          }
+
+          .stepName {
+            white-space: nowrap;
+            color: $primary !important;
+          }
+
+          .stepIcon {
+            min-width: 60px;
+          }
+        }
+
+        .active + .stepTransition {
+          width: 30%;
+          margin-right: 10px;
+          margin-left: 10px;
+          @media screen and (max-width: 520px) and (min-width: 391px) {
+            width: 15%;
+            margin-left: 55px;
+          }
+          @media screen and (max-width: 440px) {
+            margin-left: 70px;
+            margin-right: 0px;
+          }
+          @media screen and (max-width: 390px) {
+            min-width: 65px;
+          }
+        }
+      }
+
+      .formSection {
+        flex-direction: column;
+        padding-left: 10px;
+        padding-right: 10px;
+
+        .inputField {
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+
+      .checkIRP {
+        & > form {
+          flex-direction: column;
+        }
+
+        .inputField, .fieldArea {
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+
+      .addUSDOT {
+        & > form {
+          flex-direction: column;
+
+          .radioQuestion {
+            width: 100%;
+          }
+
+          .radioQuestion {
+            p, label {
+              white-space: unset;
+              font-size: 12.5px;
+              span {
+                white-space: initial !important;
+              }
+            }
+
+            .radioGroup {
+              flex-direction: column;
+              align-items: flex-start;
+              gap: 10px;
+            }
+          }
+
+          .usdotArea {
+            flex-direction: column;
+
+            @media screen and (max-width: 1024px) {
+              justify-content: start !important;
+            }
+
+            @media screen and (max-width: 768px) {
+                align-items: flex-start;
+            }
+            .inputField {
+              width: 100%;
+              max-width: 100% !important;
+            }
+          }
+        }
+      }
+
+      .others {
+        .othersMain {
+          padding: 10px;
+
+          .inputsContainer {
+            flex-direction: column;
+
+            .inputField, .inputFile {
+              width: 100%;
+              max-width: 100%;
+            }
+
+            .inputFile {
+              white-space: nowrap;
+            }
+          }
+        }
+      }
+
+      .ownerOfficer {
+        .ownerOfficerMain {
+          padding-left: 10px;
+          padding-right: 10px;
+
+          .normalBtn.MuiButtonBase-root:not(.confirmActions .normalBtn.MuiButtonBase-root) {
+            width: 100%;
+          }
+
+          .confirmActions {
+            max-width: 100%;
+          }
+
+          .dataTable {
+            table:first-of-type {
+              margin-bottom: 0;
+            }
+          }
+
+          .inputsContainer {
+            flex-direction: column;
+            @media screen and (max-width: 350px) {
+              flex-direction: initial;
+
+              button {
+                padding: 5px 25px !important;
+                min-width: initial !important;
+              }
+            }
+            .inputField {
+              width: 100%;
+              max-width: 100%;
+            }
+          }
+        }
+      }
+
+      //end .ownerOfficer
+
+
+      .questionnaireMain {
+        padding-left: 10px;
+        padding-right: 10px;
+
+        .checkItem {
+          .checksContainer {
+            padding-bottom: 10px;
+
+            label {
+              margin-bottom: 16px;
+              font-weight: 400;
+              font-size: 11px;
+            }
+          }
+        }
+
+        .storageItem {
+          flex-direction: column;
+
+          & > .inputField, .normalBtn.MuiButtonBase-root {
+            width: 100%;
+            max-width: 100%;
+          }
+
+          @media screen and (max-width: 390px) {
+            & > .normalBtn.MuiButtonBase-root {
+              max-width: 279px !important;
+            }
+          }
+        }
+      }
+
+      .userInfo {
+        .userInfoArea {
+          padding-left: 5px;
+          padding-right: 5px;
+
+          .initialItem {
+            .inputField input {
+              border-color: #07276526;
+            }
+
+            .initialRule {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+
+      //end initials, signature
+
+      .orderCreator {
+        flex-direction: column;
+        flex-wrap: wrap;
+        column-gap: 3px;
+        row-gap: 10px;
+        align-items: center;
+        .userDataItem{
+          width: 100%;
+          &:not(.signatureArea) {
+          max-width: 100%;
+            min-height: unset;
+          }
+
+        }
+
+        .signatureArea {
+          margin-bottom: 20px;
+        }
+      }
+
+      .carrierInfo {
+        padding: 0;
+
+        .carrierInfoCard {
+          background-color: $grayBG;
+          padding: 0 5px 10px;
+        }
+      }
+
+
+
+
+      .steBtns {
+        padding-left: 10px;
+        padding-right: 10px;
+
+        .normalBtn.MuiButtonBase-root {
+          padding: 10px !important;
+        }
+      }
+
+    }
+  }
+  .infoContainer{
+    padding: 5px 10px;
+    tr{
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .formPage {
+    .formPageCard {
+      .orderCreator {
+        .userDataItem {
+          width: 100%;
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
+
+.usdotVerify,
+.usdotInput {
+  max-width: 280px !important;
+  width: 100% !important;
+
+  @media screen and (max-width: 768px) {
+    max-width: 100% !important;
+  }
+}
+
+.usdotArea {
+  @media screen and (max-width: 1024px) {
+    justify-content: start !important;
+  }
+}
+
+.dateInput {
+  width: 100%;
+  max-width: 279px;
+  position: relative;
+  @media screen and (max-width: 768px) {
+    max-width: 768px;
+  }
+  border: none !important;
+  * {
+    border: none !important;
+  }
+  .MuiFormControl-root {
+    width: 100%;
+    max-width: 279px;
+    @media screen and (max-width: 768px) {
+      max-width: 768px;
+    }
+    outline: 1px solid #FFBF00;
+    border: none !important;
+  &:hover,
+  &:active {
+    outline: 1px solid #FFBF00;
+    border: none !important;
+  }
+  .MuiInputBase-root {
+    border-radius: 0;
+    outline: 1px solid #FFBF00;
+    border: none !important;
+    padding-right: 0;
+    &:hover,
+    &:active {
+      outline: 1px solid #FFBF00;
+      border: none !important;
+    }
+    input {
+      outline: 1px solid #FFBF00;
+      border: none !important;
+      &:hover,
+      &:active {
+        outline: 1px solid #FFBF00;
+        border: none !important;
+      }
+      width: 100%;
+      padding: 10px;
+      background: #FDFDFF;
+      border: none;
+      height: 38px !important;
+      box-sizing: border-box;
+      color: #000000;
+      font-size: 14px;
+      border: none !important;
+    }
+  }
+
+  .MuiButtonBase-root {
+    transform: translateX(-8.5px);
+    border: none !important;
+  }
+
+  .css-zs07ro-MuiInputBase-root-MuiFilledInput-root:after,
+  .css-zs07ro-MuiInputBase-root-MuiFilledInput-root:before {
+    border: none !important;
+  }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .formPage .questionnaireMain .question-first-step .storageItem .normalBtn.MuiButtonBase-root ,
+  .question-first-step .normalBtn {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  .columnCenter-mb {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .size14-mb {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .ownerOfficer .ownerOfficerMain form {
+    div:has(.normalBtn) {
+      width: 100% !important;
+    }
+
+    .normalBtn {
+      max-width: 100% !important;
+      width: 100% !important;
+    }
+  }
+}
+
+[role="dialog"].css-1anqmj6-MuiPopper-root-MuiPickersPopper-root {
+  z-index: 1 !important;
+}
+
+[role="dialog"] .css-cwhad8-MuiDateCalendar-root {
+  width: 100% !important;
+  height: 100%;
+}
+
+.taxPariod .MuiChip-root {
+  display: none;
+}
+
+@media screen and (max-width: 440px) {
+  .formPage .formPageCard .stepController .flexBetween.alignStart {
+    justify-content: initial;
+  }
+}
+
+@media screen and (max-width: 411px) {
+  .formPage .formPageCard .stepController .flexBetween.alignStart {
+    justify-content: space-between;
+  }
+
+  .stepTransitionToPayment {
+    display: none !important;
+  }
+
+  .formPage .formPageCard .stepController .active + .stepTransition + .stepItem {
+    margin-right: -50px;
+  }
+}
+
+@media screen and (max-width: 390px) {
+  .formPage .formPageCard .stepController .active + .stepTransition + .stepItem {
+    width: 35%;
+  }
+}
+
+@media screen and (max-width: 612px) {
+  .stepControllerWrapper.step1 {
+    justify-content: flex-start;
+  }
+}
+
+
+@media screen and (max-width: 520px) {
+  .stepControllerWrapper.step1 {
+    justify-content: flex-start;
+  }
+
+  .stepControllerWrapper.step2 .stepTransition,
+  .stepControllerWrapper.step1 .stepTransition {
+    width: 20% !important;
+    margin-left: 5px !important;
+    margin-right: 0px !important;
+  }
+}
+
+@media screen and (max-width: 411px) {
+  .stepControllerWrapper.step2 {
+    justify-content: space-between;
+    gap: 10px;
+  }
+}

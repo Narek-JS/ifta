@@ -1,0 +1,246 @@
+@import "index";
+
+.servicesPage {
+  overflow: hidden;
+
+  .lastInfo {
+    margin-top: 30px;
+  }
+}
+
+.infoSection {
+  & > h1 {
+    font-size: 20px;
+    color: $primary;
+    line-height: 30px;
+    padding-left: 10px;
+    border-left: 4px solid $secondary;
+    margin-bottom: 26px;
+  }
+
+  .infoContent {
+    padding: 30px;
+    background-color: $grayBG;
+    width: calc(68% - 30px);
+
+    h1, h2, h3 {
+      color: $primary;
+    }
+
+    p, span, b {
+      color: $primary60;
+      line-height: 24px;
+    }
+
+    p{
+      margin-bottom: 20px;
+    }
+
+    a {
+      color: #000;
+      text-decoration: underline;
+    }
+  }
+
+  .infoImg {
+    width: calc(32% + 30px);
+    max-height: 340px;
+
+    img {
+      width: 100%;
+      height: 100%;
+      vertical-align: middle;
+      object-fit: cover;
+    }
+  }
+}
+
+.contactUs {
+  min-height: 688px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+
+  .contactContent {
+    width: calc(46% - 20px);
+
+    & > h1 {
+      padding-left: 15px;
+      border-left: 4px solid $secondary;
+    }
+
+    .texts {
+      span, p {
+        color: $primary60;
+      }
+
+      a {
+        text-decoration: underline;
+        color: $secondary;
+        white-space: nowrap;
+      }
+    }
+
+    .normalBtn {
+      min-width: 140px;
+    }
+  }
+
+  .contactForm {
+    width: calc(54% - 20px);
+
+    .inputGroup {
+      margin-bottom: 38px;
+    }
+
+    .left {
+      width: calc(50% - 10px);
+    }
+
+    .right {
+      width: calc(50% - 10px);
+
+      .message {
+        padding: 20px 10px 40px;
+        margin-bottom: 0;
+        background-color: $grayBG;
+
+        .MuiFormHelperText-root {
+          left: 10px;
+          bottom: 20px;
+        }
+
+        .MuiTextarea-root, textarea {
+          background-color: $grayBG;
+        }
+      }
+    }
+
+    .submitContact .MuiButtonBase-root svg path {
+      transition: .3s;
+    }
+
+    .submitContact .MuiButtonBase-root:hover {
+      svg path {
+        fill: $white;
+      }
+    }
+
+    .normalBtn{
+      min-width: 140px !important;
+    }
+  }
+}
+
+//////////   Privacy Policy @##############
+.privacyPolicy{
+  .privacyContent{
+    padding-top: 20px;
+    h2{
+      color: $primary;
+      margin-bottom: 10px;
+      font-size: 24px;
+      @media screen and (max-width: 768px) {
+        font-size: 20px;
+      }
+    }
+    p{
+      margin-bottom: 20px;
+      font-size: 20px;
+
+      @media screen and (max-width: 768px) {
+        font-size: 16px;
+      }
+    }
+    ul, ol{
+      padding-left: 20px;
+      li {
+        font-size: 20px;
+        margin-bottom: 10px;
+        @media screen and (max-width: 768px) {
+            font-size: 18px;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .infoSection {
+    & > div {
+      gap: 20px;
+    }
+
+    .infoContent {
+      padding: 20px;
+      width: calc(50% + 20px);
+    }
+
+    .infoImg {
+      width: calc(50% - 20px);
+    }
+  }
+  .contactUs {
+    flex-direction: column;
+
+    .contactContent, .contactForm {
+      width: 100%;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .contactUs {
+    .contactForm {
+      .contactFormMain {
+        flex-direction: column;
+        gap: 0;
+
+        .left, .right {
+          width: 100%;
+          .message, textarea, .MuiTextarea-root{
+            background-color: initial !important;
+          }
+        }
+
+        .inputGroup {
+          margin-bottom: 20px;
+        }
+      }
+
+      .submitContact {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+      }
+    }
+  }
+  .servicesPage {
+    padding-top: 20px;
+  }
+  .infoSection {
+    & > h1 {
+      margin-bottom: 20px;
+      font-size: 18px;
+      line-height: 24px;
+    }
+
+    & > div {
+      flex-direction: column;
+    }
+
+    .infoContent {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid $secondary;
+    }
+
+    .infoImg {
+      width: 100%;
+      height: 240px;
+    }
+  }
+}
+
+
+
+

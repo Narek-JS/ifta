@@ -1,0 +1,459 @@
+@import "index";
+
+.authWrapper {
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+  position: relative;
+  min-height: calc(100vh - 56px);
+  display: flex;
+  justify-content: center;
+  @media screen and (max-width: 768px) {
+    min-height: calc(100vh - 65px);
+  }
+  &.profileWrapper {
+    padding: 20px 18%;
+
+    .authContainer {
+      padding-top: 0;
+      max-width: 100%;
+
+      & > a {
+        display: none;
+      }
+    }
+
+    .faqsContainer {
+      .MuiButtonBase-root {
+        background-color: $grayBG;
+      }
+    }
+  }
+
+  & > img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: -1;
+    object-fit: cover;
+    filter: blur(4.5px);
+  }
+
+  .authContainer {
+    width: 100%;
+    position: relative;
+    max-width: 645px;
+
+    &:has(.forgotPassword),
+    &:has(.resetPasswordForm) {
+      margin-top: 50px;
+
+      @media screen and (max-width: 768px) {
+        margin-top: 0px;
+      }
+    }
+
+
+    & .backBtn {
+      padding: 0;
+      position: absolute;
+      z-index: 9;
+      left: 10px;
+      top: 10px;
+      max-width: fit-content;
+
+      @media screen and (max-width: 768px) {
+        top: 0px;
+      }
+    }
+
+    .authHeaders {
+      padding-left: 9.5%;
+      padding-right: 9.5%;
+      margin-bottom: 25px;
+    }
+  }
+
+  .authForm {
+    width: 100%;
+    min-height: 400px;
+    padding: 30px;
+    background-color: $white;
+    border: 2px solid rgba(255, 191, 0, 0.4);
+
+    &.resetPasswordForm{
+      .backBtn{
+        display: none;
+      }
+    }
+
+    form {
+      .inputField {
+        width: 100%;
+
+        input {
+          border: 1px solid $secondary;
+        }
+      }
+
+      .rememberMe {
+        cursor: pointer;
+        font-weight: 400;
+
+        input {
+          width: 16px;
+          height: 16px;
+          accent-color: $secondary;
+          background-color: $white;
+          color: $white;
+        }
+      }
+
+      .loginBtn {
+        width: 100%;
+        max-width: 280px;
+      }
+    }
+
+    .authFormEnding {
+      border-bottom: 1px solid rgba(7, 39, 101, 0.4);
+
+      .terms {
+        font-size: 12px;
+      }
+
+      .orPart {
+        hr {
+          width: 80px;
+        }
+      }
+
+      .loginWithGoogle {
+        max-width: 328px;
+        width: 100%;
+        background: #FFFFFF;
+        border: 1px solid #E0E0E9;
+        box-shadow: 0px 18px 30px 0px rgba(131, 119, 198, 0.11);
+        padding: 12px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+
+        @media screen and (max-width: 500px) {
+          gap: 5px; 
+        }
+
+        .googleIcon,
+        svg {
+          max-width: 23px;
+          max-height: 23px;
+        }
+
+        .action {
+          font-weight: 500;
+          font-size: 20px;
+          color: #1D1C2B;
+        }
+      }
+    }
+  }
+}
+
+.historyWrapper {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  min-height: calc(100vh - 146px);
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  .subTitle {
+    height: 40px;
+  }
+
+  .faqsContainer {
+    overflow: hidden;
+    padding: 20px 40px 0 40px;
+    box-shadow: 3px 3px 5px rgba(48,51,51,.25);
+
+    .MuiAccordion-root .MuiAccordionSummary-root {
+      background-color: #FFFFFF;
+
+      .Mui-expanded {
+        background-color: #FFFFFF;
+      }
+    }
+
+    .MuiAccordionDetails-root {
+      padding: 0 !important;
+    }
+  }
+
+  .carrierInfo .carrierInfoCard {
+    padding: 0;
+    position: relative;
+  }
+
+  .toPdf {
+    position: absolute;
+    top: 20px;
+    cursor: pointer;
+
+    span {
+      line-height: 18px;
+      border-bottom: 2px solid $primary;
+    }
+  }
+
+  .orderBtns {
+    padding: 20px 0;
+
+    .normalBtn.primary {
+      a {
+        color: $primary;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      svg {
+        transform: rotate(180deg);
+
+        path {
+          fill: $primary;
+          transition: .25s;
+        }
+      }
+
+      &:hover {
+        path {
+          fill: $white;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1536px) {
+  .authWrapper.profileWrapper {
+    padding-left: 6%;
+    padding-right: 6%;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .historyWrapper {
+    .faqsContainer {
+      padding: 0 20px;
+
+      .MuiAccordion-root .MuiAccordionSummary-root {
+        padding: 0;
+      }
+
+      .carrierInfo {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .authWrapper {
+    padding: 20px 16px;
+
+
+    &.profileWrapper {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .authContainer {
+      padding-top: 0;
+
+      & > a {
+        left: 10px;
+        top: 10px;
+        font-size: 14px;
+
+        svg {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    .authForm {
+      padding: 47px 20px 25px 20px;
+    }
+  }
+  .historyWrapper {
+    background-image: unset;
+
+    .authContainer {
+      box-shadow: -4px -2px 10px rgba(7, 39, 101, 0.15), 4px 4px 10px rgba(7, 39, 101, 0.15);
+    }
+
+    .faqsContainer {
+      padding: 0 5px;
+
+      .carrierInfoCard {
+        background-color: $grayBG;
+      }
+
+      .carrierInfo {
+        .infoContainer {
+          padding: 5px 10px;
+
+          .infoItem {
+            width: 100%;
+          }
+        }
+
+        .infoSubTitle {
+          padding-top: 10px;
+        }
+      }
+    }
+
+    .toPdf {
+      display: none;
+    }
+  }
+}
+
+@media print {
+  .historyWrapper,
+  .historyWrapper .faqsContainer,
+  .carrierInfo {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .historyWrapper {
+    .faqSquare {
+      margin-right: 25px;
+    } 
+  }
+
+  .infoContainer {
+    flex-direction: column !important;
+
+    .infoItem {
+      width: 100% !important;
+    }
+  }
+  .MuiPaper-root:not(.Mui-expanded), .btnToTop, .orderBtns {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 520px) {
+    .historyWrapper .faqsContainer .orderBtns {
+      flex-direction: column;
+      .normalBtn {
+        width: 100%;
+      }
+    }
+}
+
+@media screen and (max-width: 457px) {
+  .authWrapper {
+    .authContainer {
+      .authHeaders {
+        padding: 0;
+        gap: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 15px;
+        max-width: 280px;
+      }
+    }
+
+    .authForm {
+      form {
+        .inputGroup {
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+
+          .inputField {
+            max-width: 280px;
+          }
+        }
+      }
+
+      .rememberForgot {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 280px;
+
+        & * {
+          font-size: 14px;
+        }
+      }
+
+      .authFormEnding {
+        gap: 10px;
+
+        span {
+          text-align: center;
+          line-height: 18px;
+
+          @media screen and (max-width: 377px) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .underline {
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+  }
+}
+
+.orderDetailsTb table tr td {
+  width: 100%;
+  margin-left: auto;
+}
+
+.orderDetailsTb table tr td:first-child {
+  margin-left: 0 !important;
+}
+
+.orderDetailsTb table tr td:first-child .primary60.email {
+  overflow-wrap: anywhere;
+}
+
+.orderDetailsTb table tr td div {
+  justify-content: flex-start !important;
+}
+
+@media print {
+  .historyWrapper .reContinueBtn,
+  .historyWrapper .historyGroupTitle {
+    display: none !important;
+  }
+
+  .orderDetailsTb table tr td:nth-child(2) div {
+    margin-left: 25px !important;
+  }
+
+  .orderDetailsTb table tr td div .primary {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .orderDetailsTb table tr td div .primary60 {
+    font-size: 13px;
+  }
+  
+  .billingHistoryRowTitle div {
+    margin-left: -40px;
+  }
+}
