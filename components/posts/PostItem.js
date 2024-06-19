@@ -9,15 +9,17 @@ export default function PostItem({ data, compact, all }) {
     return (
         <div className={classNames('nth-blog', { compact })}>
             <div className='img'>
-                <Image
-                    src={data.image}
-                    width={368}
-                    height={250}
-                    blurDataURL={data.image}
-                    loader={ImageLoader}
-                    alt={data.category_id === 1 ? "Blog" : "News"}
-                    loading="lazy"
-                />
+                { data.image && (
+                    <Image
+                        src={data.image}
+                        width={368}
+                        height={250}
+                        blurDataURL={data.image}
+                        loader={ImageLoader}
+                        alt={data.category_id === 1 ? "Blog" : "News"}
+                        loading="lazy"
+                    />
+                )}
             </div>
             <div className='blog-content'>
                 <div className='flexBetween font20 weight500 top-part mb20'>

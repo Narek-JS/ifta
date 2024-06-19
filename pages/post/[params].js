@@ -33,7 +33,7 @@ const getCommentJSX = (comment) => (
 // Function to get related post JSX
 const getRelatedPostJSX = (relatedPost, index) => (
   <div className="nth-blog" key={index}>
-    <Link href={`/post?slug=${relatedPost.slug}&category_id=${relatedPost.category_id}`} className="img">
+    <Link href={`/post/singlePost?slug=${relatedPost.slug}&category_id=${relatedPost.category_id}`} className="img">
       <Image src={relatedPost.image} width={240} height={200} loader={ImageLoader} alt='Post' />
     </Link>
     <div className='blog-content'>
@@ -185,8 +185,10 @@ export default function SinglePost({ postData, latestPostsData }) {
 }
 
 // Fetch data on the server-side
-export async function getServerSideProps(context) {
+async function getServerSideProps(context) {
   const { slug, category_id } = context.query;
+  console.log('slug, category_id --> ', {slug, category_id});
+  
   // Fetch single post data
   const postResponse = await fetch(`${API_URL}/posts/${slug}`);
   const postData = await postResponse.json();
