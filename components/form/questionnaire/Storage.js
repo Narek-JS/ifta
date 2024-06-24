@@ -1,5 +1,6 @@
-import StorageItem from "@/components/form/questionnaire/StorageItem";
+import { useMemo } from "react";
 import NormalBtn from "@/components/universalUI/NormalBtn";
+import StorageItem from "@/components/form/questionnaire/StorageItem";
 
 export default function Storage({
     storage,
@@ -12,7 +13,52 @@ export default function Storage({
     error,
     setErrors
 }) {
-    const states = data.states.map(el => el).sort();
+    // Use useMemo to create a sorted list of states.
+    const states = useMemo(() => {
+        return data.states.map(el => el).sort();
+    }, [data.states]);
+
+    // Handle the addition of a new state.
+    const handleAddStateClick = () => {
+        let errors = [];
+
+        // Validate each storage item.
+        storage.forEach((item, index) => {
+            errors[index] = {
+                state: item.state ? "" : "Required",
+                city: item.city ? "" : "Required"
+            };
+        });
+
+        // Check if there are any errors.
+        const isError = errors.some(el => el.state || el.city);
+        if (isError) {
+            // Set storage errors if any.
+            setStorageErrors(errors);
+        } else {
+            // Add a new empty storage item and set errors.
+            setStorageErrors([ ...errors, { state: "", city: "" } ]);
+            setStorage((prev) => ([...prev, {}]));
+        };
+    };
+
+    // Handle the closing of the question.
+    const handleCloseQuestion = () => {
+        setErrors(prev => {
+            let newError = [...prev];
+
+            // Update error state to false for the current question.
+            newError.forEach((el => {
+                if(el.id === data.id) {
+                    el.error = false;
+                };
+            }));
+            return newError;
+        });
+
+        // Set condition to "no".
+        setCondition("no");
+    };
 
     return (
         <div className="question-first-step">
@@ -25,9 +71,7 @@ export default function Storage({
                             value="yes"
                             name="storage"
                             checked={condition === "yes"}
-                            onChange={() => {
-                                setCondition("yes")
-                            }}
+                            onChange={() => setCondition("yes")}
                         />
                         <span> Yes </span>
                     </label>
@@ -37,20 +81,9 @@ export default function Storage({
                             value="yes"
                             name="storage"
                             checked={condition === "no"}
-                            onChange={() => {
-                                setErrors(prev => {
-                                    let newError = [...prev];
-                                    newError.forEach((el => {
-                                        if(el.id === data.id){
-                                            el.error = false
-                                        }
-                                    } ))
-                                    return newError
-                                })
-                                setCondition("no")
-                            }}
+                            onChange={handleCloseQuestion}
                         />
-                        <span> No</span>
+                        <span>No</span>
                     </label>
                 </div>
             </div>
@@ -68,35 +101,14 @@ export default function Storage({
                 />
             ))}
             {error && <p className="font14 red errMessage" id="errMessage" >Please, select one</p>}
-            {condition === "yes" && <NormalBtn
-                onClick={() => {
-                    let errors = [];
-                    storage.forEach((item, index) => {
-                        errors[index] = {
-                            state: item.state ? "" : "Required",
-                            city: item.city ? "" : "Required"
-                        }
-                    });
-                    const isError = errors.some(el => el.state || el.city);
-                    if (isError) {
-                        setStorageErrors(errors)
-                    } else {
-                        setStorageErrors([
-                            ...errors,
-                            {state: "", city: ""}
-                        ])
-                        setStorage((prev) => (
-                            [
-                                ...prev,
-                                {}
-                            ]
-                        ))
-                    }
-                }}
-                className="outlined secondary bg-lighthouse-black min-w-280"
-            >
-                <span>+</span> Add another state
-            </NormalBtn>}
+            {condition === "yes" && (
+                <NormalBtn
+                    onClick={handleAddStateClick}
+                    className="outlined secondary bg-lighthouse-black min-w-280"
+                >
+                    <span>+</span> Add another state
+                </NormalBtn>
+            )}
         </div>
-    )
-}
+    );
+};

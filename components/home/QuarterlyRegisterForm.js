@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
 import { useState } from "react";
+
 import InputField from "../universalUI/InputField";
 import NormalBtn from "../universalUI/NormalBtn";
 import GoogleLogin from "../auth/GoogleLogin";
@@ -25,20 +26,29 @@ const QuarterlyRegisterForm = () => {
             remember_me: false
         },
         onSubmit: async (values) => {
+            // Set loading status to true.
             setIsLoading(true);
+
+            // Call to login api with is_quarterly parameter. 
             const { payload: registrationResponse } = await dispatch(userLogin({ ...values, is_quarterly: '1' }));
 
             if(registrationResponse?.action) {
-                successRegistration();  
+                // Handle successful registration.
+                successRegistration();
             } else {
+                // Handle registration error.
                 handleRegistrationError(registrationResponse?.result);
             };
+
+            // Set loading status to false.
             setIsLoading(false);
         },
         validationSchema: loginSchema
     });
 
+    // Function to handle successful registration.
     function successRegistration() {
+        // Get user data from Redux store.
         dispatch(getUser());
 
         if(formik.values.remember_me) {
@@ -50,33 +60,44 @@ const QuarterlyRegisterForm = () => {
             localStorage.removeItem("cGFzc3dvcmQ=");
         };
 
+        // Remove "toForm" flag from localStorage and Redirect to quarters page.
         localStorage.removeItem("toForm");
         router.push("/quarters");
     };
 
+    // Function to handle registration error.
     function handleRegistrationError(result) {
+        // Transform errors and Set form errors.
         if(result?.data) {
             const errors = transformErrors(result?.data);
             formik.setErrors(errors);
         };
 
+        // Display error message.
         toast.error(result?.message, { position: toast.POSITION.TOP_RIGHT });
 
+        // Open resend email verification popup.
         if(result?.data?.verified === false) {
             dispatch(setPopUp({
                 popUp: "resend-email",
-                popUpAction: () => 
-                    dispatch(resendEmailVerify({ email: values.email }))
+                popUpAction: () => {
+                    // Dispatch resend email verification action.
+                    return dispatch(resendEmailVerify({ email: values.email }))
                         .then((res) => {
+                            // Display success message.
                             if(res?.payload?.message) {
                                 toast.success(res?.payload?.message);
                             };
+
+                            // Close popup.
                             dispatch(setPopUp({}));
-                        })
+                        });
+                }
             }));
         };
     };
 
+    // Handler for checkbox change.
     const handleCheckboxChange = () => {
         formik.setValues({
             ...formik.values,

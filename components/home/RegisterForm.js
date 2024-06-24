@@ -1,5 +1,5 @@
+import { QUARTERLY_FILLING_ID, TEMPORARY_PERMIT_ID, TRIPS_AND_FUEL_DOMAIN } from "@/utils/constants";
 import { getBaseStates, selectAppTypes, selectBaseStates } from "@/store/slices/resgister";
-import { QUARTERLY_FILLING_ID, TEMPORARY_PERMIT_ID } from "@/utils/constants";
 import { BoldArrowIcon } from "@/public/assets/svgIcons/BoldArrowIcon";
 import { Autocomplete, Button, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { registerSchema } from "@/utils/schemas";
 import { useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { useFormik } from "formik";
+
 import InputField from "@/components/universalUI/InputField";
 import PhoneMask from "@/components/universalUI/PhoneMask";
 import PopupIcon from "@/public/assets/svgIcons/PopupIcon";
@@ -28,23 +29,29 @@ export default function RegisterForm() {
             state: ""
         },
         onSubmit: (values) => {
+            // Store form data in localStorage.
             localStorage.setItem("registerData", JSON.stringify(values));
+
+            // Redirect to carrier info form if user is logged in.
             if(user) {
                 return router.push("/form/carrier-info");
             };
 
+            // Set a flag in localStorage and Redirect to sign-up page if user is not logged in.
             localStorage.setItem("toForm", "true");
             router.push("/sign-up");
         },
         validationSchema: registerSchema
     });
 
+    // Effect to dispatch getBaseStates action if baseStates or appTypes are not available.
     useEffect(() => {
         if(!baseStates || !appTypes) { 
             dispatch(getBaseStates());
         };
     }, []);
 
+    // Effect to set form values with user's email and phone if available.
     useEffect(() => {
         if (user?.email || user?.phone) {
             formik.setValues({
@@ -55,6 +62,7 @@ export default function RegisterForm() {
         };
     }, [user]);
 
+    // Memoize application type options to filter out QUARTERLY_FILLING_ID.
     const applicationTypeOptions = useMemo(() => {
         if(!Array.isArray(appTypes)) {
             return [];
@@ -63,21 +71,21 @@ export default function RegisterForm() {
         return appTypes.filter(appType => appType.id !== QUARTERLY_FILLING_ID);
     }, [appTypes]);
 
+    // Handler for changing application type.
     const handleApplicationTypeChange = (value) => {
         if(value?.id === TEMPORARY_PERMIT_ID) {
-            return window.open('https://www.tripsandfuel.com/#tripAndFuelNationWide', '_blank'); 
+            return window.open(TRIPS_AND_FUEL_DOMAIN, '_blank'); 
         };
         formik.setValues({ ...formik.values, application_type: value || "" });
     };
 
+    // Handler for changing state.
     const handleStateChange = (value) => {
         formik.setValues({ ...formik.values, state: value || ""});
     };
 
     return (
-        <div className={classNames("registerForm ifta", {
-            'registerForm-ifta-withUser': user
-        })}>
+        <div className={classNames("registerForm ifta", { 'registerForm-ifta-withUser': user })}>
             <div className="registerTitle">
                 <h3 className="lighthouse-black font20 textCenter">Register for IFTA Now</h3>
             </div>

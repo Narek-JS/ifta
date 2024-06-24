@@ -1,20 +1,58 @@
 import { getQuarterPeriodDate, getTotalFormat } from "@/utils/helpers";
+import { Fragment } from "react";
+import classNames from "classnames";
 
 export default function CarrierDetails({ data }) {
     if (!data) return null;
 
-    const isIrpAndIfta = data?.application_type.name !== 'New IFTA Registration' && (
-        data?.ifta_account_number === '' || data?.ifta_account_number === 0
+    // Check if the application is not a 'New IFTA Registration' and does not have an IFTA account number.
+    const isIrpAndIfta = Boolean(
+        data?.application_type.name !== 'New IFTA Registration' &&
+        (data?.ifta_account_number === '' || data?.ifta_account_number === 0)
+    );
+
+    // Check if the application is a 'New IFTA Registration' or has an IRP account number.
+    const isIprAccountNumber = Boolean(
+        data?.application_type.name === 'New IFTA Registration' ||
+        (data?.irp_account === '1' && data?.irp_account_number)
+    );
+
+    // Check if the application is not a 'New IFTA Registration' and has a valid IFTA account number.
+    const isIftaAccountNumber = Boolean(
+        data?.application_type.name !== 'New IFTA Registration' &&
+        data?.ifta_account_number !== '' &&
+        data?.ifta_account_number !== 0 &&
+        data?.ifta_account_number !== null &&
+        (data?.state.require_ifta !== '0' && data?.ifta_account_number !== '1')
+    ); 
+
+    // Check if there are any members associated with the carrier.
+    const isMember = Boolean(Array.isArray(data?.member_with_relations) && data?.member_with_relations.length);
+
+    // Check if there are any vehicles associated with the carrier.
+    const isVehicle = Boolean(Array.isArray(data?.vehicle_with_relations) && data?.vehicle_with_relations?.length);
+
+    // Check if there are any quarters associated with the carrier.
+    const isQuarter = Boolean(Array.isArray(data?.quarters_with_relations) && data?.quarters_with_relations?.length);
+
+    // Check the IRP account number value based on the data provided.
+    const irpAccountNumberValue = data?.irp_account === '1' ? (
+        (data?.irp_account_number && data?.irp_account_number !== '1') ? data.irp_account_number : 'Yes'
+    ) : (
+        'No'
     );
 
     return (
-        <>
+        <Fragment>
             <h2 className="subTitle flexCenter alignCenter gap10 font20 line24 whiteBg textCenter weight500 mb10">
                 <span className="primary">Carrier Information</span>
             </h2>
+
             <div className="carrierInfo grayBG">
                 <div className="carrierInfoCard whiteBg">
                     <div className="borderDashed overflow-y-auto">
+
+                        {/* Carrier Details */}
                         <h3 className="infoSubTitle textCenter weight500">
                             <span className="primary weight700">Carrier Details</span>
                         </h3>
@@ -48,23 +86,19 @@ export default function CarrierDetails({ data }) {
                                         </div>
                                     </td>
                                     <td>
-                                        { (data?.application_type.name === 'New IFTA Registration' || (data?.irp_account === '1' && data?.irp_account_number)) &&
+                                        { isIprAccountNumber && (
                                             <div className="infoItem flex gap10 alignCenter">
                                                 <p className="primary">IRP Account Number :</p>
-                                                <p className="primary60">{data?.irp_account === '1' ? (data?.irp_account_number && data?.irp_account_number !== '1' ? data.irp_account_number : 'Yes') : 'No'}</p>
+                                                <p className="primary60">{irpAccountNumberValue}</p>
                                             </div>
-                                        }
-                                        { data?.application_type.name !== 'New IFTA Registration' &&
-                                        data?.ifta_account_number !== '' &&
-                                        data?.ifta_account_number !== 0 &&
-                                        data?.ifta_account_number !== null &&
-                                        (data?.state.require_ifta !== '0' && data?.ifta_account_number !== '1') && 
+                                        )}
+                                        { isIftaAccountNumber && (
                                             <div className="infoItem flex gap10 alignCenter">
                                                 <p className="primary">IFTA Account Number :</p>
                                                 <p className="primary60">{data.ifta_account_number}</p>
                                             </div>
-                                        }
-                                        { isIrpAndIfta &&
+                                        )}
+                                        { isIrpAndIfta && (
                                             <tr>
                                                 <td>
                                                     <div className="infoItem flex gap10 alignCenter">
@@ -73,7 +107,7 @@ export default function CarrierDetails({ data }) {
                                                     </div>
                                                 </td>
                                             </tr>
-                                        }
+                                        )}
                                     </td>
                                     <td>
                                         <div className="infoItem flex gap10 alignCenter">
@@ -82,7 +116,7 @@ export default function CarrierDetails({ data }) {
                                         </div>
                                     </td>
                                 </tr>
-                                { !isIrpAndIfta &&
+                                { !isIrpAndIfta && (
                                     <tr>
                                         <td>
                                             <div className="infoItem flex gap10 alignCenter">
@@ -91,19 +125,22 @@ export default function CarrierDetails({ data }) {
                                             </div>
                                         </td>
                                     </tr>
-                                }
+                                )}
                             </tbody>
                         </table>
 
-                        { Boolean(Array.isArray(data?.member_with_relations) && data?.member_with_relations.length) && (
+                        {/* Conditionally render Member Details if applicable */}
+                        { isMember && (
                             <h3 className="infoSubTitle textCenter weight500">
                                 <span className="primary weight700">Members Details</span>
                             </h3>
                         )}
 
-
-                        {(Array.isArray(data?.member_with_relations) ? [...data?.member_with_relations] : []).map((el, i) => (
-                            <table key={el.id} className={`infoContainer ${i === data.member_with_relations?.length - 1 ? "" : "borderDashedBottom"}`}>
+                        {/* Render Member Details */}
+                        { isMember && data?.member_with_relations.map((el, i) => (
+                            <table key={el.id} className={classNames('infoContainer', {
+                                borderDashedBottom: i !== (data.member_with_relations?.length - 1)}
+                            )}>
                                 <tbody>
                                     <tr>
                                         <td>
@@ -115,7 +152,7 @@ export default function CarrierDetails({ data }) {
                                         <td>
                                             <div className="infoItem flex gap10 alignCenter">
                                                 <p className="primary">Name:</p>
-                                                <p className="primary60">{el?.name}</p>
+                                                <p className="primary60">{el?.name || "N/A"}</p>
                                             </div>
                                         </td>
                                         <td>
@@ -149,14 +186,18 @@ export default function CarrierDetails({ data }) {
                             </table>
                         ))}
 
-                        <h3 className="infoSubTitle textCenter weight500">
-                            <span className="primary weight700">
-                                { Boolean(data?.vehicle_with_relations?.length) && 'Vehicle Details' }
-                            </span>
-                        </h3>
+                        {/* Conditionally render Vehicle Details if applicable */}
+                        { isVehicle && (
+                            <h3 className="infoSubTitle textCenter weight500">
+                                <span className="primary weight700">Vehicle Details</span>
+                            </h3>
+                        )}
 
-                        {data?.vehicle_with_relations?.map((el, i) => (
-                            <table key={el.id} className={`infoContainer ${i === data.vehicle_with_relations?.length - 1 ? "" : "borderDashedBottom"}`}>
+                        {/* Render Vehicle Details */}
+                        { isVehicle && data?.vehicle_with_relations.map((el, i) => (
+                            <table key={el.id} className={classNames('infoContainer', {
+                                borderDashedBottom: i !== (data.vehicle_with_relations?.length - 1)
+                            })}>
                                 <tbody>
                                     <tr>
                                         <td>
@@ -182,16 +223,17 @@ export default function CarrierDetails({ data }) {
                             </table>
                         ))}
 
-                        {data?.quarters_with_relations?.map((el, i) => (
+                        {/* Conditionally render Quarterly Information if applicable */}
+                        {isQuarter && data?.quarters_with_relations.map((el, i) => (
                             <div className="ownerOfficer quarterDataForView" key={el.id}>
                                 <h2 className="subTitle font20 line24 whiteBg textCenter weight500 primary flexCenter gap4 columnCenter-mb">
                                     Reporting IFTA miles and gallons for the
-                                    {getQuarterPeriodDate({ name: el?.quarter?.name, year: el?.quarter?.year })}
-                                    { !Boolean(el?.data?.length) && (
-                                        <p className="primary60">(No Operation)</p>
-                                    )}
+                                    { getQuarterPeriodDate({ name: el?.quarter?.name, year: el?.quarter?.year }) }
+                                    { !Boolean(el?.data?.length) && <p className="primary60">(No Operation)</p> }
                                 </h2>
-                                <table className={`infoContainer ${i === data.vehicle_with_relations?.length - 1 ? "" : "borderDashedBottom"}`}>
+                                <table className={classNames('infoContainer', {
+                                    borderDashedBottom: i !== (data.vehicle_with_relations?.length - 1) 
+                                })}>
                                     { el?.data?.length ? (
                                         <tbody>
                                             <tr className="quarterTable spaceAround">
@@ -232,10 +274,9 @@ export default function CarrierDetails({ data }) {
                                 </table>
                             </div>
                         ))}
-
                     </div>
                 </div>
             </div>
-        </>
-    )
-}
+        </Fragment>
+    );
+};

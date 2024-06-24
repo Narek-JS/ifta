@@ -9,11 +9,13 @@ import { BagIcon } from "@/public/assets/svgIcons/BagIcon";
 import { selectIsUser } from "@/store/slices/auth";
 import { ImageLoader } from "@/utils/helpers";
 import { useSelector } from "react-redux";
+
 import RegisterForm from "@/components/home/RegisterForm";
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 
+// InfoItem component to render individual information items.
 const InfoItem = ({ icon: Icon, text }) => (
     <div className="infoItem flex gap20-1900-gap5 alignCenter">
         <Icon />
@@ -24,6 +26,7 @@ const InfoItem = ({ icon: Icon, text }) => (
 export default function MainBanner() {
     const isUser = useSelector(selectIsUser);
 
+    // Function to handle Apply Now button click.
     const handleApplyNowClick = () => {
         if(!isUser) {
             localStorage.setItem("toForm", "true");
@@ -43,11 +46,12 @@ export default function MainBanner() {
                 alt="distance"
             />
 
+            {/* Render QuarterlyRegisterForm if user is not signed in */}
             { !isUser && <QuarterlyRegisterForm /> }
 
-            <div className={classNames("infoContent flexColumn", {'notUser': !isUser })}>
+            <div className={classNames("infoContent flexColumn", {notUser: !isUser })}>
                 <div className="infoItem textCenter">
-                    <div className=" flexCenter gap10 alignCenter">
+                    <div className="flexCenter gap10 alignCenter">
                         <ExclamationIcon />
                         <h1 className="secondary font24 line34">YOUR FUEL TAX EXPERTS</h1>
                     </div>
@@ -79,6 +83,7 @@ export default function MainBanner() {
                 </div>
             </div>
 
+            {/* Render RegisterForm component */}
             <RegisterForm />
         </div>
     );

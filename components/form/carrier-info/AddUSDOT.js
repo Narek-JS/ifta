@@ -1,44 +1,67 @@
-import { IMaskInput } from "react-imask";
-import { useDispatch, useSelector } from "react-redux";
 import { clearUsdotValues, getUsdotValuesByNumber, selectUsdotValues, selectUsdotValuesStatus } from "@/store/slices/resgister";
 import { VerificationContext } from "@/contexts/VerificationCarrierInfoContext";
 import { LoadingRow } from "@/components/universalUI/LoadingRow";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, Fragment } from "react";
+import { TO_GET_USDOT_DOMAIN } from "@/utils/constants";
+import { useDispatch, useSelector } from "react-redux";
 import { selectIsUser } from "@/store/slices/auth";
-import { Fragment } from "react";
+import { IMaskInput } from "react-imask";
 import InputField from "@/components/universalUI/InputField";
 import NormalBtn from "@/components/universalUI/NormalBtn";
-import Link from "next/link";
 import classNames from "classnames";
+import Link from "next/link";
 
 export default function AddUSDOT({ formik, handleVerify, disableBtn, einRef }) {
     const usdotValuesStatus = useSelector(selectUsdotValuesStatus);
     const usdotValues = useSelector(selectUsdotValues);
     const isUser = useSelector(selectIsUser);
     const dispatch = useDispatch();
-    const isUSDOT = formik.values.isUSDOT === "yes";
 
     const { setVerified, loader, isVerifyUsdot, isUnVerifyedState, setIsUnVerifyedState } = useContext(VerificationContext);
 
-    useEffect(() => {
-        if(usdotValues && usdotValuesStatus === 'success') {
-            dispatch(clearUsdotValues());
-        };
-    }, [isUser]);
-
+    // Effect to fetch USDOT values when the formik value for usdotNumber changes and the values are empty.
     useEffect(() => {
         if(formik.values.usdotNumber && Object.keys(usdotValues).length === 0) {
             dispatch(getUsdotValuesByNumber({ usdotNumber: formik.values.usdotNumber }))
         };
     }, []);
 
+    // Effect to clear USDOT values when the usdotValuesStatus is 'success' and the user status changes.
+    useEffect(() => {
+        if(usdotValues && usdotValuesStatus === 'success') {
+            dispatch(clearUsdotValues());
+        };
+    }, [isUser]);
+
+    // Handle form submission.
     const onSubmit = (e) => {
         e.preventDefault();
         handleVerify();
     };
 
+    // Handle changes to the USDOT input field.
+    const handleUsdotChange = (event) => {
+        let string = event.target.value;
+        if (/^\d+$/.test(string) || string === '') {
+            formik.setValues({ ...formik.values, usdotNumber: string });
+        };
+    };
+
+    // Handle selection of "No USDOT".
+    const handleSelectNoUsdot = (event) => {
+        setIsUnVerifyedState(true);
+        setVerified(false);
+        formik.handleChange(event);
+    };
+
+    // Handle selection of "Yes USDOT".
+    const handleSelectYesUsdot = (event) => {
+        isUnVerifyedState === false && setVerified(true);
+        formik.handleChange(event);
+    };
+
     return (
-        <div className={`addUSDOT whiteBg p20 mb10 ${loader ? 'sectionLoading' : ''}`}>
+        <div className={classNames('addUSDOT whiteBg p20 mb10', { sectionLoading: loader })}>
             <form className="flexBetween gap20 alignEnd" onSubmit={onSubmit}>
                 <div className="radioQuestion">
                     <p className="primary mb5 line24 nowrap">
@@ -52,10 +75,7 @@ export default function AddUSDOT({ formik, handleVerify, disableBtn, einRef }) {
                                 value="yes"
                                 name="isUSDOT"
                                 checked={formik.values.isUSDOT === "yes"}
-                                onChange={(e) => {
-                                    isUnVerifyedState === false && setVerified(true);
-                                    formik.handleChange(e);
-                                }}
+                                onChange={handleSelectYesUsdot}
                             />
                             <span className="white-space-nowrap">USDOT Number</span>
                         </label>
@@ -65,28 +85,16 @@ export default function AddUSDOT({ formik, handleVerify, disableBtn, einRef }) {
                                 value="no"
                                 name="isUSDOT"
                                 checked={formik.values.isUSDOT === "no"}
-                                onChange={(e) => {
-                                    setIsUnVerifyedState(true);
-                                    setVerified(false);
-                                    formik.handleChange(e);
-                                }}
+                                onChange={handleSelectNoUsdot}
                             />
                             <span className="white-space-nowrap"> I don't have an active USDOT number to attach!</span>
                         </label>
                     </div>
                 </div>
-                {isUSDOT ? (
+                {formik.values.isUSDOT === "yes" && (
                     <div className="usdotArea flex alignEnd gap20 justifyEnd w100">
                         <InputField
-                            onChange={(event) => {
-                                let string = event.target.value;
-                                if (/^\d+$/.test(string) || string === '') {
-                                    formik.setValues({
-                                        ...formik.values,
-                                        usdotNumber: string
-                                    })
-                                }
-                            }}
+                            onChange={handleUsdotChange}
                             onBlur={formik.handleBlur}
                             value={formik.values.usdotNumber}
                             error={(formik.touched.usdotNumber && formik.errors.usdotNumber) || usdotValuesStatus === 'failed' && 'USDOT Number Not Found'}
@@ -101,25 +109,25 @@ export default function AddUSDOT({ formik, handleVerify, disableBtn, einRef }) {
                         <NormalBtn
                             loading={loader}
                             onClick={handleVerify}
-                            className={`outlined usdotVerify bg-lighthouse-black ${disableBtn ? "disableBtn" : ""}`}
+                            className={classNames('outlined usdotVerify bg-lighthouse-black', { disableBtn })}
                         >
                             Verify
                         </NormalBtn>
                         { isVerifyUsdot && <span className="error">Please verify your USDOT Number</span>}
                     </div>
-                ) : ""}
-                {!isUSDOT ? (
-                    <div className={`formMessage primary`}>
+                )}
+                {formik.values.isUSDOT !== "yes" && (
+                    <div className='formMessage primary'>
                         <p>
-                            In order to register for the IFTA, you will need to have a valid USDOT number. We can help
-                            you
-                            get one! <Link href="https://www.dotoperatingauthority.com/how-to-get-a-usdot-number-2/" target="_blank"> Click
-                            here </Link>
-                            or simply call <Link href="tel:8882330899">(888)-233-0899</Link> to apply for your USDOT
-                            number.
+                            In order to register for the IFTA, you will need to have a valid USDOT number.
+                            We can help you get one!
+                            <Link href={TO_GET_USDOT_DOMAIN} target="_blank"> Click here </Link>
+                            or simply call
+                            <Link href="tel:8882330899">(888)-233-0899</Link>
+                            to apply for your USDOT number.
                         </p>
                     </div>
-                ) : ""}
+                )}
             </form>
             { usdotValues.content && formik.values.isUSDOT === "yes" && (
                 loader ? <LoadingRow /> : (
@@ -133,18 +141,18 @@ export default function AddUSDOT({ formik, handleVerify, disableBtn, einRef }) {
                         <div className="block">
                             <h2 className="title mb5">Physical Address</h2>
                             <div className="wrapperContent">
-                                { usdotValues.content?.carrier?.phyStreet &&
+                                { usdotValues.content?.carrier?.phyStreet && (
                                     <p className="subTitle"><span>Address: </span> {usdotValues.content.carrier.phyStreet} </p>
-                                }
-                                { usdotValues.content?.carrier?.phyCity && 
+                                )}
+                                { usdotValues.content?.carrier?.phyCity && (
                                     <p className="subTitle"><span>City: </span> {usdotValues.content.carrier.phyCity}</p>
-                                }
-                                { usdotValues.content?.carrier?.phyState && 
+                                )}
+                                { usdotValues.content?.carrier?.phyState && (
                                     <p className="subTitle"><span>State: </span> {usdotValues.content.carrier.phyState}</p>
-                                }
-                                { usdotValues.content?.carrier?.phyZipcode &&  
+                                )}
+                                { usdotValues.content?.carrier?.phyZipcode && (
                                     <p className="subTitle"><span>Zipcode: </span> {usdotValues.content.carrier.phyZipcode}</p>
-                                }
+                                )}
                             </div>                            
                         </div>
 
@@ -178,5 +186,5 @@ export default function AddUSDOT({ formik, handleVerify, disableBtn, einRef }) {
                 )
             )}
         </div>
-    )
-}
+    );
+};

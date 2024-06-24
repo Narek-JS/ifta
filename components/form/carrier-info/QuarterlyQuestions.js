@@ -11,6 +11,7 @@ import PopupIcon from "@/public/assets/svgIcons/PopupIcon";
 import NormalBtn from "@/components/universalUI/NormalBtn";
 import classNames from "classnames";
 
+// Styled component for the group header in the autocomplete dropdown.
 const GroupHeader = styled('div')(() => ({
     position: 'sticky',
     top: '-8px',
@@ -27,6 +28,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
     const permitDetails = useSelector(selectPermitDetails);
     const dispatch = useDispatch();
 
+    // Memoized value to categorize states by country.
     const stateByCategorys = useMemo(() => {
         return allStates?.reduce((acc, item) => {
             acc[item.country].push({ 
@@ -39,6 +41,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
         }, { canada: [], usa: [] });
     }, []);
 
+    // Memoized value to get the current period's quarterly fillings by ID.
     const quarterlyFillingsListById = useMemo(() => {
         if(Array.isArray(quarterlyFillingsList)) {
             const result = quarterlyFillingsList?.find((quarterlyFilling) => quarterlyFilling.id === currentPeriodRange.id) || {};
@@ -48,6 +51,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
         return [];
     }, [quarterlyFillingsList, currentPeriodRange]);
 
+    // Memoized options for the autocomplete fields.
     const options = useMemo(() => {
         if(stateByCategorys) {
             const sortedStates = [
@@ -67,6 +71,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
         };
     }, [stateByCategorys, quarterlyFillingsListById]); 
 
+    // Callback function to handle edit operations.
     const handleEditCallback = (data) => {
         const newValues = {
             ...formik.values,
@@ -79,11 +84,14 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
         formik.setValues(newValues);
     };
 
+    // Function to handle delete operations.
     const handleDelete = (id) => {
         function updateQuarters() {
+            // Dispatch remove quarter filling action.
             dispatch(getQuarterlyFillings({
                 permit_id: permitDetails?.form_id,
                 callback: (data) => {
+                    // Update table after successfuly delete proccess.
                     const quarterPeriodRange = data?.find(period => period?.id === currentPeriodRange.id);
                     if(quarterPeriodRange?.data?.length === 0) {
                         formik.setValues({
@@ -95,6 +103,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
             }));
         };
 
+        // Open remove quarter popup.
         dispatch(setPopUp({
             popUp: "removeQuarterPopup",
             popUpContent: "Are You Sure You Want to Remove This Report?",
@@ -102,8 +111,10 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
         }));
     };
 
+    // Function to handle "No" selection for operating in a jurisdiction.
     const handleChangeOperateNo = (event) => {
         if(quarterlyFillingsListById?.data?.length) {
+            // Opend popup to proof delete all quarter pariods by clicking no.
             dispatch(setPopUp({
                 popUp: "removeQuarterPopup",
                 popUpContent: "By clicking the 'Yes' button, your saved report will be removed. Are you sure you want to proceed with these changes?",
@@ -114,16 +125,19 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                         quarter_condition: '0'
                     };
 
+                    // Hnadle remove quarter pariods error.
                     const rejectCallback = (message = 'server Error, please try again after one minutes') => {
                         toast.error(message);
                     };
 
-                    const callBackForDoneRemoveProcess = (response) => {
+                    // Update Quarter pariods after successfuly delete all quarter pariods
+                    const callBackForDoneRemoveProcess = () => {
                         formik.handleChange(event);
                         dispatch(getQuarterlyFillings({ permit_id: permitDetails?.form_id }));
                         dispatch(setPopUp({}));
                     };
                     
+                    // Dispatch remove quarter Pariods action.
                     return dispatch(removeQuarterPeriod({
                         payload,
                         callback: callBackForDoneRemoveProcess,
@@ -132,10 +146,85 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                 }
             }));
         } else {
+            // Change checkmark without update anything.
             formik.handleChange(event);
         };
     };
     
+    // Function to handle "Yes" selection for operating in a jurisdiction.
+    const handleChangeOperateYes = () => {
+        formik.setValues({
+            ...formik.values,
+            [`isOperate${currentPeriodRange.id}`]: "yes"
+        });
+    };
+
+    // Handler functions for fuel type field changes.
+    const handleFuelTypeChange = (e, value) => {
+        formik.setValues({
+            ...formik.values,
+            [`fuel_type${currentPeriodRange.id}`]: value || ""
+        });
+    };
+
+    // Handler functions for state field changes.
+    const handleStateChange = (e, state) => {
+        formik.setValues({
+            ...formik.values,
+            [`state${currentPeriodRange.id}`]: state || ""
+        });
+    };
+
+    // Handler functions for Txbl Miles field changes.
+    const handleTxblMilesChange = (event) => {
+        let string = event.target.value;
+
+        // Validate Txbl Miles value, should not be greater then 7.
+        if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
+            formik.setValues({
+                ...formik.values,
+                [`txbl_miles${currentPeriodRange.id}`]: string
+            });
+        };
+    };
+
+    // Handler functions for Tax paid gal field changes.
+    const handleTaxPaidGalChange = (event) => {
+        let string = event.target.value;
+
+        // Validate Tax paid gal value, should not be greater then 7.
+        if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
+            formik.setValues({
+                ...formik.values,
+                [`tax_paid_gal${currentPeriodRange.id}`]: string
+            });
+        };
+    };
+
+    // Function to close the quarter row and reset the form.
+    const closeQuarterRow = () => {
+        formik.resetForm();
+        formik.setFieldValue(`isOperate${currentPeriodRange.id}`, 'added');
+        dispatch(clearQarterRowData());
+    };
+
+    // Function to reverse the quarterly fillings array.
+    const reversedQuarterlyFillings = () => {
+        return [...quarterlyFillingsListById?.data].map((_, index, array) => {
+            return array[array.length - 1 - index];
+        });
+    };
+
+    // Helper function to check if the quarter filling form is open.
+    const isOpenQuarterFillingForm = () => {
+        return ['yes', 'added', 'edit'].includes(formik.values[`isOperate${currentPeriodRange.id}`]);
+    };
+
+    // Booleans to manage conditional rendering of components.
+    const isShowQuarterPariodRowForm = Boolean(['yes', 'edit'].includes(formik.values[`isOperate${currentPeriodRange.id}`]));
+    const isOpenAddAnotherStateButton = Boolean(quarterlyFillingsListById?.data?.length && formik.values[`isOperate${currentPeriodRange.id}`] === 'added');
+    const isOpendQuarterPariodTable = Boolean(quarterlyFillingsListById?.data?.length && ['yes', 'added', 'edit'].includes(formik.values[`isOperate${currentPeriodRange.id}`]));
+
     return (
         <div
             className="ownerOfficer"
@@ -159,7 +248,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                                 value="yes"
                                 name={`isOperate${currentPeriodRange.id}`}
                                 onChange={formik.handleChange}
-                                checked={['yes', 'added', 'edit'].includes(formik.values[`isOperate${currentPeriodRange.id}`])}
+                                checked={isOpenQuarterFillingForm()}
                             />
                             <span className="primary">Yes</span>
                         </label>
@@ -179,22 +268,17 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                     </p>
                 </Fragment>
 
-                { Boolean(quarterlyFillingsListById?.data?.length && ['yes', 'added', 'edit'].includes(formik.values[`isOperate${currentPeriodRange.id}`])) && (
+                { isOpendQuarterPariodTable && (
                     <QuarterlyQuestionsTable
-                        quarterlyFillingsList={[...quarterlyFillingsListById?.data].map((_, index, array) => array[array.length - 1 - index])}
+                        quarterlyFillingsList={reversedQuarterlyFillings()}
                         handleEditCallback={handleEditCallback}
                         handleDelete={handleDelete}
                         totalCost={quarterlyFillingsListById?.cost}
                     />
                 )}
 
-                { Boolean(quarterlyFillingsListById?.data?.length && formik.values[`isOperate${currentPeriodRange.id}`] === 'added') && (
-                    <NormalBtn className="filled bg-lighthouse-black gap10 min-m-w-initial ml-auto" onClick={() => {
-                        formik.setValues({
-                            ...formik.values,
-                            [`isOperate${currentPeriodRange.id}`]: "yes"
-                        })
-                    }}>
+                { isOpenAddAnotherStateButton && (
+                    <NormalBtn className="filled bg-lighthouse-black gap10 min-m-w-initial ml-auto" onClick={handleChangeOperateYes}>
                         <span className="lighthouse-black" style={{ fontSize: '30px' }}>+</span>
                         Add another state
                     </NormalBtn>
@@ -203,7 +287,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                 <div className={classNames("radioQuestion checkIrpAccount", {
                     'justifyEnd': quarterlyFillingsListById?.data?.length 
                 })}>
-                    { Boolean(['yes', 'edit'].includes(formik.values[`isOperate${currentPeriodRange.id}`])) && (
+                    { isShowQuarterPariodRowForm && (
                         <form className="inputsContainer flex wrap alignEnd gap20 justifyEnd w100">
                             <InputField
                                 error={formik.touched?.[`fuel_type${currentPeriodRange.id}`] && formik.errors?.[`fuel_type${currentPeriodRange.id}`]}
@@ -211,12 +295,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                                 required={true}
                                 className='inputField'
                                 element={<Autocomplete
-                                    onChange={(e, value) => {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            [`fuel_type${currentPeriodRange.id}`]: value || ""
-                                        })
-                                    }}
+                                    onChange={handleFuelTypeChange}
                                     onBlur={formik.handleBlur}
                                     value={formik.values?.[`fuel_type${currentPeriodRange.id}`] || null}
                                     popupIcon={<PopupIcon />}
@@ -236,12 +315,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                                 className="inputField"
                                 required={true}
                                 element={<Autocomplete
-                                    onChange={(e, state) => {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            [`state${currentPeriodRange.id}`]: state || ""
-                                        })
-                                    }}
+                                    onChange={handleStateChange}
                                     loading={false}
                                     onBlur={formik.handleBlur}
                                     value={formik.values?.[`state${currentPeriodRange.id}`] || null}
@@ -252,9 +326,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                                     groupBy={(option) => option.groupName}
                                     name={`state${currentPeriodRange.id}`}
                                     id={`state${currentPeriodRange.id}`}
-                                    getOptionLabel={(option) => {
-                                        return option.state || option || '';
-                                    }}
+                                    getOptionLabel={(option) => option.state || option || ''}
                                     renderGroup={(params) => (
                                         <li key={params.key}>
                                             <GroupHeader>{params.group}</GroupHeader>
@@ -265,15 +337,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                             />
 
                             <InputField
-                                onChange={(event) => {
-                                    let string = event.target.value;
-                                    if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            [`txbl_miles${currentPeriodRange.id}`]: string
-                                        });
-                                    };
-                                }}
+                                onChange={handleTxblMilesChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values?.[`txbl_miles${currentPeriodRange.id}`]}
                                 error={formik.touched?.[`txbl_miles${currentPeriodRange.id}`] && formik.errors?.[`txbl_miles${currentPeriodRange.id}`]}
@@ -286,15 +350,7 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                             />
 
                             <InputField
-                                onChange={(event) => {
-                                    let string = event.target.value;
-                                    if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            [`tax_paid_gal${currentPeriodRange.id}`]: string
-                                        });
-                                    };
-                                }}
+                                onChange={handleTaxPaidGalChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values?.[`tax_paid_gal${currentPeriodRange.id}`]}
                                 error={formik.touched?.[`tax_paid_gal${currentPeriodRange.id}`] && formik.errors?.[`tax_paid_gal${currentPeriodRange.id}`]}
@@ -309,29 +365,16 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                             <Fragment>
                                 { quarterlyFillingsListById?.data?.length ? (
                                     <div className="confirmActions flexBetween gap10">
-                                        <NormalBtn
-                                            onClick={formik.handleSubmit}
-                                            className="filled bg-lighthouse-black"
-                                        >
+                                        <NormalBtn onClick={formik.handleSubmit} className="filled bg-lighthouse-black">
                                             Save Info
                                         </NormalBtn>
 
-                                        <NormalBtn
-                                            className="filled primary white"
-                                            onClick={() => {
-                                                formik.resetForm();
-                                                formik.setFieldValue(`isOperate${currentPeriodRange.id}`, 'added');
-                                                dispatch(clearQarterRowData());
-                                            }}
-                                        >
+                                        <NormalBtn className="filled primary white" onClick={closeQuarterRow}>
                                             Cancel
                                         </NormalBtn>
                                     </div> 
                                 ) : (
-                                    <NormalBtn
-                                        onClick={formik.handleSubmit}
-                                        className="filled bg-lighthouse-black"
-                                    >
+                                    <NormalBtn onClick={formik.handleSubmit} className="filled bg-lighthouse-black">
                                         Save Info
                                     </NormalBtn>
                                 )}
@@ -339,8 +382,6 @@ const QuarterlyQuestions = ({ formik, currentPeriodRange, quartersRef, index }) 
                         </form>
                     )}
                 </div>
-
-                {/* <p className="sec-err-message">invalide section error</p> */}
             </div>
         </div>
     );

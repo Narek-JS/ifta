@@ -1,11 +1,12 @@
 import { getUserVehicles, selectVehicles, selectVehiclesStatus } from "@/store/slices/vehicles";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import { selectAuthStatus, selectUserData } from "@/store/slices/auth";
-import { Arrow } from "@/public/assets/svgIcons/Arrow";
 import { useWindowSize } from "@/utils/hooks/useWindowSize";
+import { Arrow } from "@/public/assets/svgIcons/Arrow";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
+
 import NextSvgIcon from "@/public/assets/svgIcons/NextSvgIcon";
 import NormalBtn from "@/components/universalUI/NormalBtn";
 import Loader from "@/components/universalUI/Loader";
@@ -23,32 +24,43 @@ const Vehicles = () => {
     const { width } = useWindowSize();
     const [ expanded, setExpanded ] = useState(false);
 
+    // Handle change in accordion panel expansion.
     const handleChange = (panel) => () => {
+        // Collapse if the same panel is clicked again.
         if(expanded === panel) {
             return setExpanded(false);
         };
+
+        // Expand the clicked panel.
         setExpanded(panel);
     };
 
+    // Effect to check user authentication status.
     useEffect(() => {
+        // Navigate back if user is not authenticated.
         if(authStatus !== 'initial' && !user) {
             router.back();
         };
     }, [user, authStatus]);
 
+    // Effect to fetch user vehicles.
     useEffect(() => {
         dispatch(getUserVehicles());
     }, []);
 
+    // Memoized vehicles JSX for rendering vehicle details
     const vehiclesJSX = useMemo(() => {
+        // Return null if vehicles is not an array.
         if(!Array.isArray(vehicles)) {
             return null;
         };
 
         return vehicles.map((vehicle, index) => {
+            // Adapt vehicle make and model for smaller screens.
             const adaptedVehicleMake = Number(width) <= 768 && vehicle?.make?.includes(' ') ? vehicle?.make?.split(' ')?.[0] + '...' : vehicle?.make;
             const adaptedVehicleModel = Number(width) <= 768 && vehicle?.model?.includes(' ') ? vehicle?.model?.split(' ')?.[0] + '...' : vehicle?.model;
 
+            // Vehicle information groups.
             const vehcileInfo = [[
                 { title: 'VIN :', value: vehicle.vin || "N/A" },
                 { title: 'Type of fuel used :', value: vehicle.fuel_type?.name || "N/A" }, 
@@ -59,6 +71,7 @@ const Vehicles = () => {
                 { title: 'Model :', value: vehicle.model || "N/A" },
             ]];
 
+            // JSX for vehicle information rows.
             const vehcileInforJSX = vehcileInfo.map((vehcileInfoGroup, index) => {
                 const vehicleRowInfo = vehcileInfoGroup.map(({ title, value }, vehcileInfoGroupIndex) => (
                     <td key={vehcileInfoGroupIndex}>
@@ -72,6 +85,7 @@ const Vehicles = () => {
                 return <tr key={index}>{vehicleRowInfo}</tr>
             });
 
+            // Return the accordion item for each vehicle.
             return (
                 <Accordion
                     key={vehicle?.id || index}
@@ -108,6 +122,7 @@ const Vehicles = () => {
         });
     }, [vehicles, width, expanded]);
 
+    // Render loader if vehicles data is still loading.
     if(vehiclesStatus === '' || vehiclesStatus === 'panding') {
         return <Loader />;
     };

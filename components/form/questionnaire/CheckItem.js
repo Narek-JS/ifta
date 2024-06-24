@@ -1,8 +1,9 @@
-import React, { useMemo } from "react";
 import { MultipleSelectCheckmarks } from "@/components/universalUI/MultipleSelectCheckmarks";
+import { useMemo } from "react";
 
 const CheckItem = ({ states, checks, setChecks, dataIndex }) => {
 
+  // Memoize the sorted states to prevent unnecessary re-sorting on each render.
   const items = useMemo(() => {
     return states.sort();
   }, [states]);

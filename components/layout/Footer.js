@@ -1,4 +1,4 @@
-import { IFTA_EMAIL, IFTA_PHONE } from "@/utils/constants";
+import { IFTA_EMAIL, IFTA_PHONE, IFTA_PHONE_MASK } from "@/utils/constants";
 import { setPopUp } from "@/store/slices/common";
 import { ImageLoader } from "@/utils/helpers";
 import { useDispatch } from "react-redux";
@@ -8,10 +8,12 @@ import Link from "next/link";
 export default function Footer() {
     const dispatch = useDispatch();
 
+    // Function to open the terms and conditions popup.
     const openTermsPopup = () => {
         dispatch(setPopUp({ popUp: 'termsPopup' }));
     };
 
+    // Function to open the privacy policy popup
     const openPrivacyPopup = () => {
         dispatch(setPopUp({ popUp: 'privacy-policy' }));
     };
@@ -30,14 +32,14 @@ export default function Footer() {
                             alt="footer logo"
                         />
                     </Link>
-                </div>
+                </div> 
 
                 <div className="infoItem contactInfoItem">
                     <Link href="" className="font20 lighthouse-black bold500 mb10">Contact Info</Link>
                     <p className="flex alignCenter gap2-5 font14 mb10 primary80">
                         Phone: 
                         <Link href={`tel:${IFTA_PHONE}`} className="lighthouse-black underline">
-                            ( 800 ) 341 - 2870
+                            {IFTA_PHONE_MASK}
                         </Link>
                     </p>
                     <p className="flex alignCenter gap2-5 font14 mb10 primary80">

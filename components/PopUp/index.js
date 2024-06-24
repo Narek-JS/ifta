@@ -1,23 +1,24 @@
-import { Dialog } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
 import { selectPopUp, setPopUp } from "@/store/slices/common";
-import { ExampleFilePopUp } from "./ExampleFilePopUp";
-import { LogoutPopup } from "./LogoutPopup";
+import { DeleteQuarterPeriods } from "./DeleteQuarterPeriods";
 import { ExpiredVerifyPopup } from "./ExpiredVerifyPopup";
-import { TermsPopup } from "./TermsPopup";
-import { DeleteMember } from "./DeleteMember";
+import { PrivacyPolicyPopup } from "./PrivacyPolicyPopup";
+import { RemoveQuarterPopup } from "./RemoveQuarterPopup";
+import { useDispatch, useSelector } from "react-redux";
+import { PermitReContinue } from "./PermitReContinue";
+import { ResentEmailPopup } from "./ResentEmailPopup";
+import { ExampleFilePopUp } from "./ExampleFilePopUp";
+import { DeleteQuarter } from "./DeleteQuarter";
 import { DeleteVehicle } from "./DeleteVehicle";
 import { UpdatedPopup } from "./UpdatedPopup";
-import { PrivacyPolicyPopup } from "./PrivacyPolicyPopup";
+import { DeleteMember } from "./DeleteMember";
+import { LogoutPopup } from "./LogoutPopup";
+import { TermsPopup } from "./TermsPopup";
+import { Dialog } from "@mui/material";
+
 import RegisteredPopUp from "@/components/PopUp/RegisteredPopUp";
 import ExtraFaildReloadPopUp from "./ExtraFaildReloadPopUp";
-import classNames from "classnames";
 import PaymenSuccessPopup from "./PaymenSuccessPopup";
-import { ResentEmailPopup } from "./ResentEmailPopup";
-import { DeleteQuarter } from "./DeleteQuarter";
-import { PermitReContinue } from "./PermitReContinue";
-import { DeleteQuarterPeriods } from "./DeleteQuarterPeriods";
-import { RemoveQuarterPopup } from "./RemoveQuarterPopup";
+import classNames from "classnames";
 
 export default function PopUp() {
     const dispatch = useDispatch();
@@ -78,5 +79,5 @@ export default function PopUp() {
                 }
             })()}
         </Dialog>
-    )
-}
+    );
+};

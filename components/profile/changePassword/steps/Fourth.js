@@ -1,8 +1,8 @@
-import React from 'react';
 import { resetPassword } from "@/store/slices/profile";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+
 import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
 import InputField from "@/components/universalUI/InputField";
 import NormalBtn from "@/components/universalUI/NormalBtn";
@@ -17,16 +17,24 @@ const Fourth = ({ setStep, step, onClick, loading, setLoading }) => {
             password_confirmation: ''
         },
         onSubmit: (values) => {
+            // Set loading state to true during form submission.
             setLoading(true);
+
+            // Dispatch action to reset password.
             dispatch(resetPassword(values))
                 .then(res => {
-                    setLoading(false)
+                    setLoading(false);
+                    
+                    // Display success message if password reset is successful.
                     if(res.payload?.action) {
                         toast.success(`The password has benn changed successfully!`, {
                             className: 'success-toaster'
                         });
-                        setStep(1)
+
+                        // Move to the first step after password reset.
+                        setStep(1);
                     } else {
+                        // Display error message if password reset fails.
                         toast.error(res.payload?.result?.message);
                     };
                 });

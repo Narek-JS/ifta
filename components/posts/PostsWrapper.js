@@ -1,7 +1,8 @@
-import { Pagination, PaginationItem } from "@mui/material";
-import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { API_URL } from "@/utils/constants";
+import { Fragment, useEffect, useState } from "react";
+import { Pagination, PaginationItem } from "@mui/material";
+
 import Loader from "@/components/universalUI/Loader";
 import PostItem from "@/components/posts/PostItem";
 
@@ -13,15 +14,15 @@ export default function PostsWrapper({ initialPosts, initialPageCount, category,
     const [isFetching, setIsFetching] = useState(false);
     const [isInitialMount, setIsInitialMount] = useState(true);
 
+    // Function to handle page change in pagination.
     const handleChange = async (e, page) => {
         window.scrollTo({ top: 0, behavior: "smooth" });
         setPage(page);
-        router.replace({
-            query: { ...router.query, page }
-        });
+        router.replace({ query: { ...router.query, page } });
         await fetchData(category, page);
     };
 
+    // Function to fetch posts data based on category and page.
     const fetchData = async (category, page) => {
         setIsFetching(true);
         const res = await fetch(`${API_URL}/category?slug=${category}&page=${page}`);
@@ -31,27 +32,30 @@ export default function PostsWrapper({ initialPosts, initialPageCount, category,
         setIsFetching(false);
     };
 
+    // Effect to set page from router query parameters.
     useEffect(() => {
         if (router.query) {
             setPage(router.query.page || 1);
-        }
+        };
     }, [router]);
 
+    // Effect to fetch posts data when category or page changes.
     useEffect(() => {
-        // Skip fetching if it's the initial mount and we have initial posts
+        // Skip fetching if it's the initial mount and we have initial posts.
         if (isInitialMount && initialPosts.length > 0) {
             setIsInitialMount(false);
             return;
-        }
+        };
 
         if (category && page) {
             fetchData(category, page);
-        }
+        };
     }, [category]);
 
+    // Render loading spinner if fetching data.
     if (isFetching) {
         return <Loader />;
-    }
+    };
 
     return (
         <main className="page-main posts-page mPadding sectionPadding">
@@ -94,4 +98,4 @@ export default function PostsWrapper({ initialPosts, initialPageCount, category,
             )}
         </main>
     );
-}
+};

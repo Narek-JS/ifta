@@ -1,27 +1,29 @@
-import menuData from '@/data/menu.js';
-const { authMiddleMenuLinks, authMenuLinksPopper, navLinks, mobileLinks, mobileAuthLinks } = menuData;
+import { authMiddleMenuLinks, authMenuLinksPopper, navLinks, mobileLinks, mobileAuthLinks } from '@/data/menu.js';
 import { MenuIconClose, MenuIconOpen } from "@/public/assets/svgIcons/MenuIcons";
 import { AnonymousLogoIcon } from "@/public/assets/svgIcons/AnonymousLogoIcon";
 import { PhoneIcon } from "@/public/assets/svgIcons/PhoneIcon";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { MailIcon } from "@/public/assets/svgIcons/MailIcon";
 import { useWindowSize } from "@/utils/hooks/useWindowSize";
+import { IFTA_EMAIL, IFTA_PHONE, IFTA_PHONE_MASK } from "@/utils/constants";
 import { setPopUp } from "@/store/slices/common";
 import { Drawer, Popper } from "@mui/material";
 import { ImageLoader } from "@/utils/helpers";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
-import { IFTA_EMAIL, IFTA_PHONE } from "@/utils/constants";
+
 import TopPanel from "@/components/layout/TopPanel";
 import classNames from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 
+// WrapperLink component handles conditional rendering of links with or without a confirmation popup.
 const WrapperLink = ({ doubleCheck, path, className, children }) => {
     const dispatch = useDispatch();
     const { push } = useRouter();
     const target = path.includes('http') ? '_blank' : '';
 
+    // Function to open a confirmation popup before redirecting.
     const openPopupBeforeRedirect = async () => {
         await dispatch(setPopUp({
             popUp: "removeQuarterPopup",
@@ -50,20 +52,20 @@ export default function Header({ disableTopPanel, user, handleLogOut }) {
     
     const topPanel = useRef(null);
 
+    // useEffect to handle scroll event and set header transparency.
     useEffect(() => {
         setMenu(false);
         setAnchorEl(null);
 
+        // Function to handle scroll event and update header transparency.
         const headerScroll = () => {
-            if (window.pageYOffset >= topPanel.current?.clientHeight) {
-                setTransparent(2);
-            } else {
-                setTransparent(1);
-            };
+            const transparent = window.pageYOffset >= topPanel.current?.clientHeight ? 2 : 1;
+            setTransparent(transparent);
         };
 
         headerScroll();
 
+        // Add scroll event listener if on the home page.
         if (pathname === '/') {
             window.addEventListener("scroll", headerScroll);
             return () => {
@@ -74,6 +76,7 @@ export default function Header({ disableTopPanel, user, handleLogOut }) {
         };
     }, [pathname]);
 
+    // useEffect to handle closing the popper when clicking outside.
     useEffect(() => {
         document.addEventListener("click", handleClosePopper);
 
@@ -82,18 +85,22 @@ export default function Header({ disableTopPanel, user, handleLogOut }) {
         };
     }, [isMouseInPopup, anchorEl]);
 
+    // Function to close the popper if the mouse is outside.
     function handleClosePopper() {
         if (isMouseInPopup && Boolean(anchorEl)) {
             setAnchorEl(null);
         };
     };
 
+    // Function to close the mobile menu.
     const handleCloseMenu = () => setMenu(false)
 
+    // Function to toggle the popper anchor element.
     const handleClick = (event) => {
         setAnchorEl(anchorEl ? null : event.currentTarget);
     };
 
+    // Function to handle account name click based on window width.
     const handleAccountNameClick = (event) => {
         Number(width) >= 768 ? handleClick(event) : setMenu(!menu);
     };
@@ -139,7 +146,7 @@ export default function Header({ disableTopPanel, user, handleLogOut }) {
                         key={index}
                     />
                 ))}
-                {user ?
+                {user ? (
                     <div
                         className="userPopper"
                         onMouseEnter={() => setIsMouseInPopup(false)}
@@ -188,7 +195,8 @@ export default function Header({ disableTopPanel, user, handleLogOut }) {
                                 </li>
                             </ul>
                         </Popper>
-                    </div> :
+                    </div> 
+                ) : (
                     <Fragment>
                         <nav className={Number(width) > 1500 ? "flexCenter" : "flexBetween w100"}>
                             {navLinks.map(({ path, text }, index) => (
@@ -205,59 +213,64 @@ export default function Header({ disableTopPanel, user, handleLogOut }) {
                                 Sign Up
                             </Link>
                         </div>
-                    </Fragment>}
-                {width <= 1024 && <Drawer
-                    className={`mobileMenuDrawer ${disableTopPanel ? "disableTopPanel": ""}`}
-                    anchor="left"
-                    open={menu}
-                    onClose={handleCloseMenu}
-                >
-                    <div className="mobileMenuHeader flexBetween alignCenter">
-                        <div className="headerLogo">
-                            <Image
-                                src="/assets/images/logo3.png" 
-                                quality={100}
-                                width={240}
-                                height={80}
-                                loader={ImageLoader}
-                                alt="logo"
-                            />
-                        </div>
-                        { width <= 768 && (
-                            <div onClick={handleCloseMenu} className="closeMobileMenu">
-                                <MenuIconClose />
+                    </Fragment>
+                )}
+                {width <= 1024 && (
+                    <Drawer
+                        className={`mobileMenuDrawer ${disableTopPanel ? "disableTopPanel": ""}`}
+                        anchor="left"
+                        open={menu}
+                        onClose={handleCloseMenu}
+                    >
+                        <div className="mobileMenuHeader flexBetween alignCenter">
+                            <div className="headerLogo">
+                                <Image
+                                    src="/assets/images/logo3.png" 
+                                    quality={100}
+                                    width={240}
+                                    height={80}
+                                    loader={ImageLoader}
+                                    alt="logo"
+                                />
                             </div>
-                        )}
-                    </div>
-                    <div className="headerMenuMain flexColumn gap20">
-                        <Link href={`tel:${IFTA_PHONE}`} className="contactItem flex alignCenter gap15 white">
-                            <PhoneIcon />
-                            <b className="weight500">( 800 ) 341 - 2870</b>
-                        </Link>
-
-                        {!user && mobileLinks.map(({ path, text, isHandleClick }, index) => (
-                            <Link key={index} onClick={() => isHandleClick && setMenu(!menu)} className="white" href={path}>
-                                {text}
+                            { width <= 768 && (
+                                <div onClick={handleCloseMenu} className="closeMobileMenu">
+                                    <MenuIconClose />
+                                </div>
+                            )}
+                        </div>
+                        <div className="headerMenuMain flexColumn gap20"> 
+                            <Link href={`tel:${IFTA_PHONE}`} className="contactItem flex alignCenter gap15 white">
+                                <PhoneIcon />
+                                <b className="weight500">{IFTA_PHONE_MASK}</b>
                             </Link>
-                        ))}
 
-                        {user && (
-                            <Fragment>
-                                <Link onClick={() => setMenu(!menu)}  className="white" href="/">
-                                    Welcome Back {user?.name + " " + user?.last_name}
+                            {!user && mobileLinks.map(({ path, text, isHandleClick }, index) => (
+                                <Link key={index} onClick={() => isHandleClick && setMenu(!menu)} className="white" href={path}>
+                                    {text}
                                 </Link>
+                            ))}
 
-                                { mobileAuthLinks.map(({ path, text }, index) => (
-                                    <Link key={index} onClick={() => setMenu(!menu)} className="white" href={path}>{text}</Link>
-                                ))}
+                            {user && (
+                                <Fragment>
+                                    <Link onClick={() => setMenu(!menu)}  className="white" href="/">
+                                        Welcome Back {user?.name + " " + user?.last_name}
+                                    </Link>
 
-                                {user ? <Link onClick={handleLogOut} className="white" href="/">
-                                    Logout
-                                </Link> : ""}
-                            </Fragment>
-                        )}
-                    </div>
-                </Drawer>}
+                                    { mobileAuthLinks.map(({ path, text }, index) => (
+                                        <Link key={index} onClick={() => setMenu(!menu)} className="white" href={path}>{text}</Link>
+                                    ))}
+
+                                    {user && (
+                                        <Link onClick={handleLogOut} className="white" href="/">
+                                            Logout
+                                        </Link>
+                                    )}
+                                </Fragment>
+                            )}
+                        </div>
+                    </Drawer>
+                )}
                 <div className="mobileBurgerIcon" style={{ cursor: 'pointer' }} onClick={() => setMenu(!menu)}>
                     {menu ? <MenuIconClose /> : <MenuIconOpen />}
                 </div>

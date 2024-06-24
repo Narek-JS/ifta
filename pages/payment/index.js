@@ -13,6 +13,7 @@ import schemas, { paymentSchema } from "@/utils/schemas";
 import Cookies from 'js-cookie';
 import * as yup from "yup";
 
+// Card types regex patterns.
 const CARDS = {
     visa: '^4',
     amex: '^(34|37)',
@@ -23,6 +24,7 @@ const CARDS = {
     diners: '^(30[0-5]|36)'
 };
 
+// Function to determine card type based on card number.
 const cardType = (cardNumberInit) => {
     const number = cardNumberInit;
     let re;
@@ -102,28 +104,19 @@ export default function PaymentFromEmail() {
             });
         },
         validationSchema: yup.object({
-            address: schemas.text,
-            city: schemas.text,
-            state: schemas.select,
-            zip_code: schemas.zip_code,
-            initial1: schemas.initial1,
-            initial2: schemas.initialConfirm,
-            initial3: schemas.initialConfirm,
-            initial4: schemas.initialConfirm,
-            signature: schemas.required,
-            cardNumber: schemas.cardNumber,
-            cardHolder: schemas.cardHolder,
-            cardDate: schemas.required,
+            ...paymentSchema,
             ...(cvcValidation && { cardCvv: cvcValidation })
         })
     });
 
+    // Clean up on unmount
     useEffect(() => {
         return () => {
             Cookies.remove('hash');
         };
     }, []);
 
+    // Effect for handling query parameters and dispatching actions
     useEffect(() => {
         if(query.token) {
             Cookies.set('hash', query.token);
@@ -148,6 +141,7 @@ export default function PaymentFromEmail() {
         };
     }, [query]);
 
+    // Effect for populating form fields with payment data
     useEffect(() => {
         if(paymentFromEmailStatus !== 'success' || !extraData) {
             return;
@@ -168,10 +162,12 @@ export default function PaymentFromEmail() {
         };
     }, [paymentFromEmailData, paymentFromEmailStatus, extraData]);
 
+    // Memoized calculation of card type
     const useCardType = useMemo(() => {
         return cardType(formik.values.cardNumber);
     }, [formik.values.cardNumber]);
 
+    // Effect for setting CVV validation schema based on card type
     useEffect(() => {
         if(paymentFromEmailData?.is_admin !== 0) {
             return;
@@ -184,6 +180,7 @@ export default function PaymentFromEmail() {
         };
     }, [useCardType]);
 
+    // Handler for form submission
     const handleSubmit = (event) => {
         const firstGroup = [ "cardNumber", "cardHolder", "cardDate", "cardCvv" ];
         const seccondGroup = [ "address", "city", "state", "zip_code" ];
@@ -199,11 +196,13 @@ export default function PaymentFromEmail() {
         formik.handleSubmit(event);
     };
 
+    // Render null if payment data is not available
     if(!paymentFromEmailData) return null;
 
     return (
         <main className="formPage mPadding grayBG">
             <div className="formPageCard grayBG">
+                {/* Render main screen section */}
                 <MainScreen
                     formRef={mainScreenRef}
                     formik={formik}
@@ -212,6 +211,7 @@ export default function PaymentFromEmail() {
                     isAdmin={paymentFromEmailData?.is_admin === 1}
                 />
 
+                {/* Render billing information section */}
                 <Billing
                     formRef={billingRef}
                     formik={formik}
@@ -219,6 +219,7 @@ export default function PaymentFromEmail() {
                     isAdmin={paymentFromEmailData?.is_admin === 1}
                 />
 
+                {/* Render user information section */}
                 <UserInfo
                     formik={formik}
                     data={{ name: paymentFromEmailData?.full_name, title: 'Official Representative' }}
@@ -226,6 +227,7 @@ export default function PaymentFromEmail() {
                     setCondition={setCondition}
                 />
 
+                {/* Render submit button */}
                 <NormalBtn
                     loading={submitLoading}
                     disabled={condition === false}

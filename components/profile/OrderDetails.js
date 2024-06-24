@@ -1,9 +1,9 @@
 import { getExtraData, selectExtraData } from "@/store/slices/resgister";
 import { getQuarterPeriodDate, getTotalFormat } from "@/utils/helpers";
 import { PrintIcon } from "@/public/assets/svgIcons/PrintIcon";
+import { Fragment, useEffect, useRef, memo } from "react";
 import { QUARTERLY_FILLING_ID } from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { Fragment, useEffect, useRef, memo } from "react";
 import classNames from "classnames";
 
 export default memo(function OrderDetails({ data }) {
@@ -26,9 +26,7 @@ export default memo(function OrderDetails({ data }) {
                 <div className=" borderDashed">
                     <div
                         onClick={() => window.print()}
-                        className={classNames("primary weight700 flex alignCenter gap5 pointer ml20", {
-                            'toPdf': (Number(data?.is_admin) === 1) === false
-                        })}
+                        className="primary weight700 flex alignCenter gap5 pointer ml20 toPdf"
                     >
                         <PrintIcon />
                         <span>Print and download this order</span>
@@ -99,7 +97,9 @@ export default memo(function OrderDetails({ data }) {
                     )}
 
                     {!isQuarter && data.member_with_relations?.map((el, i) => (
-                        <table key={i} className={`infoContainer ${i === data.member_with_relations?.length - 1 ? "" : "borderDashedBottom"}`}>
+                        <table key={i} className={classNames('infoContainer', {
+                            borderDashedBottom: i !== data.member_with_relations?.length - 1 
+                        })}>
                             <tbody>
                                 <tr>
                                     <td>
@@ -152,7 +152,9 @@ export default memo(function OrderDetails({ data }) {
                     )}
 
                     {!isQuarter && data.vehicle_with_relations?.map((el, i) => (
-                        <table key={i} className={`infoContainer ${i === data.vehicle_with_relations?.length - 1 ? "" : "borderDashedBottom"}`}>
+                        <table key={i} className={classNames('infoContainer', {
+                            borderDashedBottom: i !== data.vehicle_with_relations?.length - 1 
+                        })}>
                             <tbody>
                                 <tr>
                                     <td>
@@ -194,10 +196,7 @@ export default memo(function OrderDetails({ data }) {
                                 })}
                             </span>
                             { quarterPariod?.data?.map((quarter, i) => (
-                                <table
-                                    key={i}
-                                    className='infoContainer quarterInfoContainer'
-                                > 
+                                <table key={i} className='infoContainer quarterInfoContainer'> 
                                     <tbody>
                                         <tr>
                                             <td>

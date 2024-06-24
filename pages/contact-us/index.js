@@ -1,4 +1,4 @@
-import { IFTA_EMAIL, IFTA_PHONE } from "@/utils/constants";
+import { IFTA_EMAIL, IFTA_PHONE, IFTA_PHONE_MASK } from "@/utils/constants";
 import ContactForm from "@/components/contact-us/contactForm";
 import Link from "next/link";
 
@@ -6,7 +6,9 @@ export default function ContactUs() {
     return (
         <div className="contactUs mPadding sectionPadding flexBetween gap40">
             <div className="contactContent">
-                <h1 className="primary font24 mb20 line24">We’re Glad You’ve Chosen to Contact Us!</h1>
+                <h1 className="primary font24 mb20 line24">
+                    We’re Glad You’ve Chosen to Contact Us!
+                </h1>
                 <div className="texts">
                     <p className="primary60 line24 mb20">
                         Our team of knowledgeable support staff will be happy to answer
@@ -15,9 +17,9 @@ export default function ContactUs() {
                     </p>
                     <p className="primary60 line24 mb20">
                         You can also email us directly at
-                        <a href={`mailto:${IFTA_EMAIL}`} className="lighthouse-black"> {IFTA_EMAIL} </a>
+                        <Link href={`mailto:${IFTA_EMAIL}`} className="lighthouse-black"> {IFTA_EMAIL} </Link>
                         or call us directly at
-                        <a href={`tel:${IFTA_PHONE}`} className="lighthouse-black"> (800) 341-2870 </a>
+                        <Link href={`tel:${IFTA_PHONE}`} className="lighthouse-black"> {IFTA_PHONE_MASK} </Link> 
                         during our business hours. We are open from Monday
                         through Friday, 6:00 a.m.—5:00 p.m. PST.
                     </p>
@@ -29,6 +31,7 @@ export default function ContactUs() {
                     FAQ
                 </Link>
             </div>
+
             <ContactForm />
         </div>
     );

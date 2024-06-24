@@ -9,6 +9,7 @@ import NormalBtn from "@/components/universalUI/NormalBtn";
 import Image from "next/image";
 import Link from "next/link";
 
+// Regular expression for email validation.
 const emailReg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 export default function ForgotForm() {
@@ -20,38 +21,51 @@ export default function ForgotForm() {
     const [ touched, setTouched ] = useState(false);
     const [ loading, setLoading ] = useState(false);
 
+    // Handle change in email input.
     const handleChange = e => {
         setEmail(e.target.value);
+
+        // Validate email format.
         if (touched) {
             setError(!emailReg.test(e.target.value));
         };
     };
 
+    // Handle blur event on email input.
     const handleBlur = () => {
         setTouched(true);
+
+        // Validate email format.
         setError(!emailReg.test(email));
     };
 
+    // Handle form submission
     const handleSubmit = (e) => {
         e.preventDefault();
+
+        // Check if email format is valid
         if(emailReg.test(email)) {
             setLoading(true);
 
+            // Dispatch forgotPassword action.
             dispatch(forgotPassword({ email }))
                 .then(res => {
                     setLoading(false);
                     if (res.payload?.action) {
+                        // Show success toast notification and Navigate to home page.
                         toast.success(res.payload?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                         router.push("/");
                     } else {
+                        // Show error toast notification.
                         toast.error(res.payload?.result?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                     };
                 });
         } else {
+            // Set error state to true if email format is invalid.
             setError(true);
         };
     };
@@ -99,7 +113,8 @@ export default function ForgotForm() {
             </form>
             <div className="authFormEnding flexColumn gap20 alignCenter" />
             <p className="primary60 mt20 textCenter">
-                Don’t have an account yet?<Link href="/sign-up" className="secondary underline white-space-nowrap"> Create Now </Link>
+                Don’t have an account yet?
+                <Link href="/sign-up" className="secondary underline white-space-nowrap"> Create Now </Link>
             </p>
         </div>
     );

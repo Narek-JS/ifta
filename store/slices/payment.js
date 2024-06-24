@@ -1,6 +1,6 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {logger} from "@/store/logger";
-import {API_URL} from "@/utils/constants";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { logger } from "@/store/logger";
+import { API_URL } from "@/utils/constants";
 
 const name = 'payment';
 

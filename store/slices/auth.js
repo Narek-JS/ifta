@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
-import { logger } from "@/store/logger";
 import { API_URL } from "@/utils/constants";
+import { logger } from "@/store/logger";
 import Cookies from 'js-cookie';
 
 const name = 'auth';

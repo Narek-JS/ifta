@@ -1,6 +1,6 @@
-import {createAsyncThunk, createSlice, isAnyOf} from "@reduxjs/toolkit";
-import {logger} from "@/store/logger";
-import {API_URL} from "@/utils/constants";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
+import { API_URL, VEHICLE_VIN_API } from "@/utils/constants";
+import { logger } from "@/store/logger";
 
 const name = 'register';
 
@@ -307,7 +307,7 @@ export const getDataByVin = createAsyncThunk(
         try {
             return await logger({
                 method: 'GET',
-                url: `https://vpic.nhtsa.dot.gov/api/vehicles/decodevinvalues/${vinCode}/?format=json`
+                url: VEHICLE_VIN_API + vinCode + '/?format=json'
             }).then((data) => {
                 callback && callback(data?.Results[0] || {});
                 return data?.Results[0] || {};
@@ -751,16 +751,6 @@ export const registerSlice = createSlice({
                     };
                 };
             };
-
-            // if(isAnyPaidQuarter) {
-            //     for(let i = 0; i < payload?.data?.length; i++) {
-            //         const quarter = payload.data[i];
-            //         if(quarter?.is_paid) {
-            //             break
-            //         };
-            //         quarter.is_filling_expired = false;
-            //     };
-            // }
 
             state.allQuarters = payload;
             state.allQuartersStatus = 'success';

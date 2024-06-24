@@ -1,10 +1,10 @@
 import { useFormik } from "formik";
-import React, { useState } from 'react';
 import { toast } from "react-toastify";
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { getUser, selectUserData } from "@/store/slices/auth";
 import { changeContactName } from "@/store/slices/profile";
-import { useEffect } from "react";
+import { getUser, selectUserData } from "@/store/slices/auth";
+
 import NormalBtn from "@/components/universalUI/NormalBtn";
 import InputField from "@/components/universalUI/InputField";
 import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
@@ -16,26 +16,26 @@ const ContactName = ({ onPrimaryDetails }) => {
     const [loading, setLoading] = useState(false);
 
     const formik = useFormik({
-        initialValues: {
-            name: ''
-        },
+        initialValues: { name: '' },
         onSubmit: (values) => {
-            setLoading(true)
+            setLoading(true);
             dispatch(changeContactName(values))
                 .then(res => {
                     if (res.payload?.action) {
+                        // Reset form after successful submission and Dispatch getUser action to update user data.
                         formik.resetForm();
                         dispatch(getUser());
-                        toast.success(res.payload?.message, {
-                            className: 'success-toaster'
-                        });
+
+                        // Display success toast message.
+                        toast.success(res.payload?.message, { className: 'success-toaster' });
                         dispatch(getUser());
                     } else {
+                        // Display error toast message and set form errors if any.
                         toast.error(res.payload?.result?.message);
                         formik.setErrors(res.payload?.result?.data);
                     };
                     setLoading(false);
-                })
+                });
         },
         validationSchema: Yup.object({
             name: Yup.string()
@@ -45,15 +45,15 @@ const ContactName = ({ onPrimaryDetails }) => {
         })
     });
 
+    // useEffect hook to set initial values when user data changes.
     useEffect(() => {
         if(user?.name && formik.values?.name === '') {
             formik.setValues({ name: user?.name || '' });
         };
     }, [user]);
 
-    const goBack = () => {
-        onPrimaryDetails && onPrimaryDetails();
-    };
+    // Function to go back to the previous step.
+    const goBack = () => onPrimaryDetails && onPrimaryDetails();
 
     return (
         <form className='nth-box contact-box step1' onSubmit={formik.handleSubmit}>

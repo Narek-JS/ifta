@@ -1,17 +1,30 @@
 import CheckItem from "@/components/form/questionnaire/CheckItem";
 
-export default function Check ({
+export default function Check({
     elRef,
-    data, 
-    checks, 
-    setChecks, 
-    condition, 
-    setCondition, 
-    dataIndex, 
-    error, 
-    setErrors 
+    data,
+    checks,
+    setChecks,
+    condition,
+    setCondition,
+    dataIndex,
+    error,
+    setErrors
 }) {
-    const states = data.states.map(el => el);
+
+    // Function to handle closing the question by setting error to false and updating the condition.
+    const handleCloseQuestion = () => {
+        setErrors(prev => {
+            let newError = [...prev];
+            newError.forEach((el => {
+                if(el.id === data.id) {
+                    el.error = false;
+                };
+            }));
+            return newError
+        });
+        setCondition("no");
+    };
 
     return (
         <div>
@@ -22,7 +35,7 @@ export default function Check ({
                         <input
                             type="radio"
                             value="yes"
-                            name={"check"+dataIndex}
+                            name={"check" + dataIndex}
                             checked={condition === "yes"}
                             onChange={() => setCondition("yes")}
                         />
@@ -32,20 +45,9 @@ export default function Check ({
                         <input
                             type="radio"
                             value="yes"
-                            name={"check"+dataIndex}
+                            name={"check" + dataIndex}
                             checked={condition === "no"}
-                            onChange={() => {
-                                setErrors(prev => {
-                                    let newError = [...prev];
-                                    newError.forEach((el => {
-                                        if(el.id === data.id){
-                                            el.error = false
-                                        }
-                                    } ))
-                                    return newError
-                                })
-                                setCondition("no");
-                            } }
+                            onChange={handleCloseQuestion}
                         />
                         <span>No</span>
                     </label>
@@ -56,12 +58,11 @@ export default function Check ({
                     dataIndex={dataIndex}
                     checks={checks}
                     setChecks={setChecks}
-                    states={states}
+                    states={data.states.map(el => el)}
                 />
             }
-            <p ref={elRef}/>
-            {error && <p className="font14 red errMessage" id="errMessage" >Please, select one</p>}
+            <p ref={elRef} />
+            {error && <p className="font14 red errMessage" id="errMessage">Please, select one</p>}
         </div>
-    )
-
-}
+    );
+};

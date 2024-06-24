@@ -1,5 +1,5 @@
-export default function QuestionnaireSvgIcon (){
-    return(
+export default function QuestionnaireSvgIcon() {
+    return (
         <svg style={{ minHeight: '48px', minWidth: '60px' }} width="60" height="48" viewBox="0 0 60 48" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="1" y="1" width="58" height="46" fill="#FFBF00"/>
             <rect x="1" y="1" width="58" height="46" stroke="#FFBF00" strokeWidth="2"/>

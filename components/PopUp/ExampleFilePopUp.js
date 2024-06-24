@@ -1,8 +1,8 @@
-import { selectPopUpContent, setPopUp } from "@/store/slices/common";
-import { ImageLoader } from "@/utils/helpers";
-import { useDispatch, useSelector } from "react-redux";
-import { FileIcon } from "@/public/assets/svgIcons/FileIcon";
 import { CloseIconYellow } from "@/public/assets/svgIcons/CloseIconYellow";
+import { selectPopUpContent, setPopUp } from "@/store/slices/common";
+import { FileIcon } from "@/public/assets/svgIcons/FileIcon";
+import { useDispatch, useSelector } from "react-redux";
+import { ImageLoader } from "@/utils/helpers";
 import Image from "next/image";
 
 export const ExampleFilePopUp = () => {
@@ -29,5 +29,5 @@ export const ExampleFilePopUp = () => {
                 alt="file"
             />
         </div>
-    )
+    );
 };

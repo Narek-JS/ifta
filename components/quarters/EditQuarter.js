@@ -8,12 +8,14 @@ import { setPopUp } from "@/store/slices/common";
 import { toast } from "react-toastify";
 import { styled } from '@mui/system';
 import { useFormik } from "formik";
+
 import PopupIcon from "@/public/assets/svgIcons/PopupIcon";
 import InputField from "../universalUI/InputField";
 import NormalBtn from "../universalUI/NormalBtn";
 import classNames from "classnames";
 import * as yup from "yup";
 
+// GroupHeader component styling.
 const GroupHeader = styled('div')(() => ({
     position: 'sticky',
     top: '-8px',
@@ -37,7 +39,6 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
             tax_paid_gal: "",
             isOperate: Boolean(quarterDataForEdit?.data?.length) ? 'added' : 'no'
         },
-
         onSubmit: (values, { resetForm, setValues }) => {
             const payload = {
                 permit_id: quarterDataForEdit.permit_id,
@@ -49,10 +50,12 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                 quarter_condition: '1'
             };
 
-            const callbackForRegetQuarters = (response) => {
+            const callbackForRegetQuarters = () => {
                 resetForm();
+                // Dispatches actions to update or create quarterly periods.
                 dispatch(getAllQuarters({
-                    callback: (response) => {
+                    callback: () => {
+                        // Resets form after successful submission.
                         dispatch(clearQarterRowData());
                         setValues({
                             fuel_type: "",
@@ -62,6 +65,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                             isOperate: 'added'
                         });
 
+                        // Show successfuly message after request is finishe.
                         toast.success('Report successfully saved', {
                             position: toast.POSITION.TOP_RIGHT
                         });
@@ -74,12 +78,14 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                 }));
             };
 
+            // Handle server error case, and show error message.
             const rejectCallback = (message = 'server Error, please try again after one minutes') => {
                 toast.error(message, {
                     position: toast.POSITION.TOP_RIGHT
                 });
             };
 
+            // Update Quarter pariods after successfuly Reget quarter
             if(values?.isOperate === 'edit') {
                 return dispatch(updateQuarter({
                     id: qarterRowData.id,
@@ -89,13 +95,13 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                 }));
             };
 
+            // Create new quarter pariod.
             dispatch(createQuarterPeriod({
                 payload,
                 callback: callbackForRegetQuarters,
                 rejectCallback
             }));
         },
-
         validationSchema: yup.object({
             fuel_type: yup.object().when(`isOperate`, {
                 is: val => val === 'yes' || val === 'edit',
@@ -117,10 +123,12 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
         })
     });
 
+    // Update form values when quarterDataForEdit changes.
     useEffect(() => {
         formik.setFieldValue('isOperate', Boolean(quarterDataForEdit?.data?.length) ? 'added' : 'no');
     }, [quarterDataForEdit]);
 
+    // Memoized computation for grouping states by category (USA/Canada).
     const stateByCategorys = useMemo(() => {
         return allStates?.reduce((acc, item) => {
             acc[item.country].push({ 
@@ -133,6 +141,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
         }, { canada: [], usa: [] });
     }, [allStates]);
     
+    // Memoized computation to filter available state options based on quarterDataForEdit.
     const options = useMemo(() => {
         if(stateByCategorys) {
             const sortedStates = [
@@ -140,6 +149,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                 ...stateByCategorys.canada.sort((a, b) => a.state.localeCompare(b.state))
             ];
 
+            // Returns an array of filtered state options.
             return sortedStates.filter((state) => {
                 const selectedState = quarterDataForEdit?.data?.find((selectedQuarter) => selectedQuarter?.state_id === state?.id);
                 return !Boolean(selectedState);
@@ -149,6 +159,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
         };
     }, [stateByCategorys, quarterDataForEdit]); 
     
+    // Callback function for editing quarter data.
     const handleEditCallback = (data) => {
         const newValues = {
             ...formik.values,
@@ -158,14 +169,24 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
             ...(Boolean(data?.tax_paid_gal || data?.tax_paid_gal === 0) && { tax_paid_gal: data.tax_paid_gal }),
             isOperate: 'edit',
         };
+
+        // Sets form values based on edited data and changes isOperate to 'edit'
         formik.setValues(newValues);
         setQarterRowData(data);
     };
 
+    // Handles the deletion of a quarterly period.
     const handleDelete = (id) => {
+        // Displays a confirmation popup before deletion.
+        dispatch(setPopUp({
+            popUp: "removeQuarterPopup",
+            popUpContent: "Are You Sure You Want to Remove This Report?",
+            popUpAction: () => dispatch(quarterDelete({ id, callback: updateQuarters }))
+        }));
+
+        // Dispatches action to delete the selected quarterly period.
         function updateQuarters() {
             dispatch(getAllQuarters({
-                callback: (response) => {},
                 rejectCallback: (message = 'Server Error') => {
                     return toast.error(message, {
                         position: toast.POSITION.TOP_RIGHT
@@ -173,16 +194,12 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                 }
             }));
         };
-
-        dispatch(setPopUp({
-            popUp: "removeQuarterPopup",
-            popUpContent: "Are You Sure You Want to Remove This Report?",
-            popUpAction: () => dispatch(quarterDelete({ id, callback: updateQuarters }))
-        }));
     };
 
+    // Handles the change in isOperate radio button.
     const handleChangeOperateNo = (event) => {
         if(quarterDataForEdit?.data?.length) {
+            // Displays a confirmation popup before deletion
             dispatch(setPopUp({
                 popUp: "removeQuarterPopup",
                 popUpContent: "By clicking the 'Yes' button, your saved report will be removed. Are you sure you want to proceed with these changes?",
@@ -193,16 +210,17 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                         quarter_condition: '0'
                     };
 
+                    // Handle request error.  
                     const rejectCallback = (message = 'server Error, please try again after one minutes') => {
                         toast.error(message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                     };
 
-                    const callBackForDoneRemoveProcess = (response) => {
+                    // Handle succesfuly requesst and get updated quarters.
+                    const callBackForDoneRemoveProcess = () => {
                         formik.handleChange(event);
                         dispatch(getAllQuarters({
-                            callback: (response) => {},
                             rejectCallback: (message = 'Server Error') => {
                                 return toast.error(message, {
                                     position: toast.POSITION.TOP_RIGHT
@@ -212,6 +230,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                         dispatch(setPopUp({}));
                     };
                     
+                    // Dispatches action to delete the selected quarterly period.
                     return dispatch(removeQuarterPeriod({
                         payload,
                         callback: callBackForDoneRemoveProcess,
@@ -222,6 +241,50 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
         } else {
             formik.handleChange(event);
         };
+    };
+
+    // Function to reverse the quarterly fillings array.
+    const reversedQuarterlyFillings = () => {
+       return [...quarterDataForEdit?.data].map((_, index, array) => array[array.length - 1 - index]);
+    };
+
+    // Function to close the quarter row and reset the form.
+    const closeQuarterRow = () => {
+        formik.resetForm();
+        formik.setFieldValue('isOperate', 'added');
+        dispatch(clearQarterRowData());
+    };
+
+    // Handler functions for Tax paid gal field changes.
+    const handleTaxPaidGalChange = (event) => {
+        let string = event.target.value;
+        if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
+            formik.setValues({
+                ...formik.values,
+                tax_paid_gal: string
+            });
+        };
+    };
+
+    // Handler functions for Txbl Miles field changes.
+    const handleTxblMilesChange = (event) => {
+        let string = event.target.value;
+        if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
+            formik.setValues({
+                ...formik.values,
+                txbl_miles: string
+            });
+        };
+    };
+
+    // Handler functions for state field changes.
+    const handleStateChange = (e, state) => {
+        formik.setValues({ ...formik.values, state: state || "" });
+    };
+
+    // Handler functions for fuel type field changes.
+    const handleFuelTypeChange = (e, value) => {
+        formik.setValues({ ...formik.values, fuel_type: value || "" });
     };
 
     return (
@@ -265,7 +328,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
 
                 { Boolean(quarterDataForEdit?.data?.length && ['yes', 'added', 'edit'].includes(formik.values.isOperate)) && (
                     <QuarterlyQuestionsTable
-                        quarterlyFillingsList={[...quarterDataForEdit?.data].map((_, index, array) => array[array.length - 1 - index])}
+                        quarterlyFillingsList={reversedQuarterlyFillings()}
                         handleEditCallback={handleEditCallback}
                         handleDelete={handleDelete}
                         totalCost={quarterDataForEdit?.cost}
@@ -273,20 +336,18 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                 )}
 
                 { Boolean(quarterDataForEdit?.data?.length && formik.values.isOperate === 'added') && (
-                    <NormalBtn className="filled bg-lighthouse-black gap10 min-m-w-initial ml-auto w100-max500" onClick={() => {
-                        formik.setValues({
-                            ...formik.values,
-                            isOperate: "yes"
-                        })
-                    }}>
+                    <NormalBtn
+                        className="filled bg-lighthouse-black gap10 min-m-w-initial ml-auto w100-max500"
+                        onClick={() => formik.setValues({ ...formik.values, isOperate: "yes" })}
+                    >
                         <span className="lighthouse-black" style={{ fontSize: '30px' }}>+</span>
                         Add another state
                     </NormalBtn>
                 )}
 
-                <div className={classNames("radioQuestion checkIrpAccount")}>
+                <div className="radioQuestion checkIrpAccount">
                     { Boolean(['yes', 'edit'].includes(formik.values.isOperate)) && (
-                        <form className="inputsContainer flex wrap alignEnd gap20  w100">
+                        <form className="inputsContainer flex wrap alignEnd gap20 w100">
                             <InputField
                                 error={formik.touched?.fuel_type && formik.errors?.fuel_type}
                                 label="Type of fuel used"
@@ -294,12 +355,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                                 select={true}
                                 className='inputField'
                                 element={<Autocomplete
-                                    onChange={(e, value) => {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            fuel_type: value || ""
-                                        })
-                                    }}
+                                    onChange={handleFuelTypeChange}
                                     onBlur={formik.handleBlur}
                                     value={formik.values?.fuel_type || null}
                                     popupIcon={<PopupIcon />}
@@ -308,8 +364,8 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                                     options={extraData?.fuelType || []}
                                     getOptionLabel={type => String(type?.name || type)}
                                     isOptionEqualToValue={(option, value) => option.id === value}
-                                    slotProps={{popper: {sx: {zIndex: 98}}}}
-                                    renderInput={(params) => <TextField {...params} placeholder="Select Fuel Type"/>}
+                                    slotProps={{popper: { sx: { zIndex: 98 } }}}
+                                    renderInput={(params) => <TextField {...params} placeholder="Select Fuel Type" />}
                                 />}
                             />
 
@@ -320,25 +376,18 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                                 select={true}
                                 required={true}
                                 element={<Autocomplete
-                                    onChange={(e, state) => {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            state: state || ""
-                                        })
-                                    }}
+                                    onChange={handleStateChange}
                                     loading={false}
                                     onBlur={formik.handleBlur}
                                     value={formik.values?.state || null}
                                     popupIcon={<PopupIcon />}
                                     options={options.sort((a, b) => - a.groupName.localeCompare(b.groupName)) || []}
-                                    slotProps={{popper: {sx: {zIndex: 98}}}}
-                                    renderInput={(params) => <TextField {...params} placeholder="Select Jurisdiction"/>}
+                                    slotProps={{ popper: { sx: { zIndex: 98 } } }}
+                                    renderInput={(params) => <TextField {...params} placeholder="Select Jurisdiction" />}
                                     groupBy={(option) => option.groupName}
                                     name='state'
                                     id='state'
-                                    getOptionLabel={(option) => {
-                                        return option.state || option || '';
-                                    }}
+                                    getOptionLabel={(option) => option.state || option || ''}
                                     renderGroup={(params) => (
                                         <li key={params.key}>
                                             <GroupHeader>{params.group}</GroupHeader>
@@ -349,15 +398,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                             />
 
                             <InputField
-                                onChange={(event) => {
-                                    let string = event.target.value;
-                                    if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            txbl_miles: string
-                                        });
-                                    };
-                                }}
+                                onChange={handleTxblMilesChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values?.txbl_miles}
                                 error={formik.touched?.txbl_miles && formik.errors?.txbl_miles}
@@ -370,15 +411,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
                             />
 
                             <InputField
-                                onChange={(event) => {
-                                    let string = event.target.value;
-                                    if ((/^[0-9]+(\.[0-9]*)?$/.test(string) && string.length < 7) || string === '') {
-                                        formik.setValues({
-                                            ...formik.values,
-                                            tax_paid_gal: string
-                                        });
-                                    };
-                                }}
+                                onChange={handleTaxPaidGalChange}
                                 onBlur={formik.handleBlur}
                                 value={formik.values?.tax_paid_gal}
                                 error={formik.touched?.tax_paid_gal && formik.errors?.tax_paid_gal}
@@ -402,11 +435,7 @@ const EditQuarter = memo(({ quarterDataForEdit }) => {
 
                                         <NormalBtn
                                             className="filled primary white mx-width130"
-                                            onClick={() => {
-                                                formik.resetForm();
-                                                formik.setFieldValue('isOperate', 'added');
-                                                dispatch(clearQarterRowData());
-                                            }}
+                                            onClick={closeQuarterRow}
                                         >
                                             Cancel
                                         </NormalBtn>

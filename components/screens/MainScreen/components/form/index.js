@@ -1,12 +1,10 @@
+import { getCorrectCardNumberFormat, getDateISOString, getTotalFormat } from '@/utils/helpers';
 import { DateField, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { getCorrectCardNumberFormat, getTotalFormat } from '@/utils/helpers';
-import { selectUserData } from '@/store/slices/auth';
-import { useSelector } from 'react-redux';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import InputField from "@/components/universalUI/InputField";
-import dayjs from "dayjs";
 import classNames from "classnames";
+import dayjs from "dayjs";
 
 export default function CForm({
     isAdmin,
@@ -24,45 +22,41 @@ export default function CForm({
     useCardType
 }) {
     const [cardNumber, setCardNumber] = useState('');
-    const user = useSelector(selectUserData);
 
+    // Handle form input changes.
     const handleFormChange = (event) => {
         const { name, value } = event.target;
+
+        // Prevent CVV from being more than 3 digits for non-Amex cards
         if(name === 'cardCvv' && useCardType !== "amex" && value.length > 3) {
             return;
         };
 
+        // Update state values.
         onUpdateState(name, value);
     };
 
-    const date = new Date();
-    const dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
-        .toISOString()
-        .split("T")[0];
-
+    // Handle card number changes and format the card number.
     const onCardNumberChange = (event) => {
         let { value, name } = event.target;
         let cardNumber = getCorrectCardNumberFormat(value);
 
+        // Set the formatted card number and Update state values.
         setCardNumber(cardNumber.trimRight());
         onUpdateState(name, cardNumber);
     };
 
-    const onCvvFocus = () => {
-        onUpdateState('isCardFlipped', true);
-    };
+    // Handle focus event on CVV input.
+    const onCvvFocus = () => onUpdateState('isCardFlipped', true);
 
-    const onCvvBlur = () => {
-        onUpdateState('isCardFlipped', false);
-    };
+    // Handle blur event on CVV input.
+    const onCvvBlur = () => onUpdateState('isCardFlipped', false);
 
     return (
         <div className="card-form">
             <div className="card-list">{children}</div>
             <div className="card-form__inner">
-                <div className={classNames("flexBetween gap10 mb20", {
-                    disabled: isAdmin
-                })}>
+                <div className={classNames("flexBetween gap10 mb20", { disabled: isAdmin })}>
                     <InputField
                         onBlur={(e)=> {
                             formik.handleBlur(e);
@@ -98,9 +92,7 @@ export default function CForm({
                         }}
                     />
                 </div>
-                <div className={classNames("flexBetween gap10", {
-                    disabled: isAdmin
-                })}>
+                <div className={classNames("flexBetween gap10", { disabled: isAdmin })}>
                     <InputField
                         error={formik.touched.cardDate && formik.errors.cardDate}
                         label="Expiration Date"
@@ -111,7 +103,7 @@ export default function CForm({
                                     format="MM/YY"
                                     ref={cardDateRef}
                                     onFocus={(e) => onCardInputFocus(e, 'cardDate')}
-                                    onBlur={(e)=> {
+                                    onBlur={(e) => {
                                         formik.handleBlur(e);
                                         onCardInputBlur(e);
                                     }}
@@ -121,10 +113,8 @@ export default function CForm({
                                         },
                                     }}
                                     value={isAdmin ? dayjs(formik.values.cardDate, "MM/YY") : cardDate}
-                                    onChange={(e)=> {
-                                        onUpdateState("cardDate", e);
-                                    }}
-                                    minDate={dayjs(dateString)}
+                                    onChange={(e) => onUpdateState("cardDate", e)}
+                                    minDate={dayjs(getDateISOString(new Date()))}
                                     placeholder="MM/YY"
                                     name="cardDate"
                                     autoComplete='cc-exp'
@@ -166,32 +156,7 @@ export default function CForm({
                     )}
                     <div className="flexBetween alignCenter mb10">
                         <p className="primary">Total Cost</p>
-                        { user?.is_admin ? (
-                            <InputField
-                                error={formik.touched.total_amount_pay && formik.errors.total_amount_pay}
-                                className="mx-170 beforeDolar"
-                                label="Total Amount"
-                                required={true}
-                                onBlur={formik.handleBlur}
-                                value={formik.values.total_amount_pay ? "$" + formik.values.total_amount_pay : formik.values.total_amount_pay}
-                                onChange={(e) => {
-                                    let input = e.target;
-                                    let value = input.value;
-                                    if(value.length > 11) {
-                                        return;
-                                    };
-                                    let numericValue = value.replace(/\D/g, '');
-                                    let formattedValue = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                                    input.value = formattedValue;
-                                    formik.handleChange(e);
-                                }}
-                                id="total_amount_pay"
-                                name="total_amount_pay"
-                                placeholder="Enter Total Amount"
-                            />
-                        ) : (
-                            <p className="primary60">${getTotalFormat(orderDetails?.totalCost)}</p>
-                        )}
+                        <p className="primary60">${getTotalFormat(orderDetails?.totalCost)}</p>
                     </div>
                 </div>
             </div>

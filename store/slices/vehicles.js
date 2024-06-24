@@ -1,5 +1,5 @@
-import { API_URL } from "@/utils/constants";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { API_URL } from "@/utils/constants";
 import { logger } from "../logger";
 
 const name = 'vehicles';

@@ -1,13 +1,13 @@
-import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
-import InputField from "@/components/universalUI/InputField";
-import NormalBtn from "@/components/universalUI/NormalBtn";
-import * as Yup from "yup";
-import React from 'react';
 import { changeEmail } from "@/store/slices/profile";
 import { getUser } from "@/store/slices/auth";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+
+import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
+import InputField from "@/components/universalUI/InputField";
+import NormalBtn from "@/components/universalUI/NormalBtn";
+import * as Yup from "yup";
 
 const Second = ({ setStep, step, onClick, setLoading }) => {
     const dispatch = useDispatch();
@@ -23,13 +23,15 @@ const Second = ({ setStep, step, onClick, setLoading }) => {
                 .then(res => {
                     setLoading(false);
                     if (res.payload?.action) {
+                        // Dispatch getUser action to update user data and Reset form after successful submission.
                         dispatch(getUser());
                         formik.resetForm();
-                        toast.success(res.payload.message, {
-                            className: 'success-toaster'
-                        });
+
+                        // Display success toast message and Move to the first step.
+                        toast.success(res.payload.message, { className: 'success-toaster' });
                         setStep(1);
                     } else {
+                        // Display error toast message and set form errors if any.
                         if (res.payload?.result?.data) {
                             formik.setErrors(res.payload?.result?.data);
                         };

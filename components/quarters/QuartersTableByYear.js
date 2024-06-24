@@ -16,10 +16,13 @@ const QuartersTableByYear = ({ quarters }) => {
     const [quarterDataForEdit, setQuarterDataForEdit] = useState(null);
     const [quarterDataForView, setQuarterDataForView] = useState(null);
 
+    // Function to handle editing a row.
     const handleRowEdit = (quarterRow) => {
+        // If already editing, cancel the edit.
         if(quarterRow.id === quarterDataForEdit?.id) {
             setQuarterDataForEdit(null);
         } else {
+            // Set the row for editing and Cancel view if editing a row.
             setQuarterDataForEdit(quarterRow);
             if(quarterDataForView) {
                 setQuarterDataForView(null);
@@ -27,20 +30,26 @@ const QuartersTableByYear = ({ quarters }) => {
         };
     };
 
+    // Function to handle viewing a row.
     const handleRowView = (quarterRow) => {
+        // If already viewing, close the view
         if(quarterRow.id === quarterDataForView?.id) {
             setQuarterDataForView(null);
         } else {
+            // Cancel edit if viewing a row and Set the row for viewing.
             if(quarterDataForEdit) {
                 setQuarterDataForEdit(null);
             };
             setQuarterDataForView(quarterRow);
         };
-    }
+    };
 
+    // Function to handle navigation to the filling form.
     const handleGoToFilling = (quarterRow) => {
+        // Find the application type for quarterly filling.
         const quarterAppType = appTypes?.find(type => type?.id === QUARTERLY_FILLING_ID);
 
+        // Prepare register data for local storage.
         const registerData = {
             email: user?.email || "",
             phone: user?.phone || "",
@@ -50,18 +59,22 @@ const QuartersTableByYear = ({ quarters }) => {
             fromQuarter: true                                                
         };
 
+        // Store register data in local storage.
         localStorage.setItem("registerData", JSON.stringify(registerData));
 
+        // Store from permits page information if permit_id exists.
         if(quarterRow.permit_id) {
             localStorage.setItem('fromPermitsPage', true);
         };
 
+        // Determine the navigation path based on whether permit_id exists.
         const toStartFilling = `/form/carrier-info?permitId=${quarterRow.permit_id}`;
         const toContinueFilling = `/form/carrier-info?taxReturnPeriodId=${quarterRow.id}`;
 
         router.push(quarterRow.permit_id ? toStartFilling : toContinueFilling);
     };
 
+    // Return null if quarters is not an array.
     if(!Array.isArray(quarters)) {
         return null;
     };

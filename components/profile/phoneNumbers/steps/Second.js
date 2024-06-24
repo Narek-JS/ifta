@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
 import { useWindowSize } from '@/utils/hooks/useWindowSize';
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserData } from '@/store/slices/auth';
 import { changePhone } from "@/store/slices/profile";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+import { useEffect } from 'react';
 
-import classNames from 'classnames';
+import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
+import InputField from "@/components/universalUI/InputField";
 import PhoneMask from "@/components/universalUI/PhoneMask";
 import NormalBtn from "@/components/universalUI/NormalBtn";
-import InputField from "@/components/universalUI/InputField";
-import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
+import classNames from 'classnames';
 
 import * as Yup from "yup";
 
@@ -30,23 +30,28 @@ const Second = ({
     const formik = useFormik({
         initialValues: {
             phoneNumber: '',
-            ...(!withoutPass && {current_password: ''})
+            ...(!withoutPass && { current_password: '' })
         },
         onSubmit: (values) => {
+            // Turn on loading bifore start to Dispatch action to change phone number.
             setLoading(true);
             dispatch(changePhone(values))
                 .then(res => {
                     setLoading(false)
                     if (res.payload?.action) {
+                        // If phone number is changed successfully, show success toast.
                         toast.success(res.payload.message, {
                             className: 'success-toaster'
                         });
+
+                        // Set the changing phone number and Move to the third step.
                         setChangingPhone(values.phoneNumber);
                         setStep(3);
                     } else {
-                        toast.error(res.payload?.result?.message)
-                    }
-                })
+                        // If there's an error, show error toast
+                        toast.error(res.payload?.result?.message);
+                    };
+                });
         },
         validationSchema: Yup.object({
             phoneNumber: Yup.string().required('Please enter your phone number').min(14, 'Enter valid phone number'),
@@ -54,6 +59,7 @@ const Second = ({
         })
     });
 
+    // Effect to set initial values if withoutPass is true and user has phone number
     useEffect(() => {
         if(withoutPass && user?.phone && formik.values?.phoneNumber === '') {
             formik.setValues({ phoneNumber: user?.phone || ''});
@@ -63,20 +69,18 @@ const Second = ({
     return (
         <form
             autoComplete='off'
-            className={classNames(`nth-box phone-box step${step}`, {
-                'p55': withoutPass
-            })}
+            className={classNames(`nth-box phone-box step${step}`, { 'p55': withoutPass })}
         >
             <div className="w100">
-                { (!withoutPass || Number(width) < 768) &&
+                { (!withoutPass || Number(width) < 768) && (
                     <div onClick={onClick} className="flex backBtn alignCenter gap5 lighthouse-black font20 weight700">
                         <BackSvgIcon/>
                         Back
                     </div>
-                }
+                )}
                 <h1 className='box-title'>Phone Number</h1>
             </div>
-            { !withoutPass &&
+            { !withoutPass && (
                 <div className='d-flex justify-between w-100'>
                     <div>
                         <p className='primary'>Add a new phone number</p>
@@ -86,11 +90,11 @@ const Second = ({
                         </p>
                     </div>
                 </div>
-            }
+            )}
             <form autoComplete='off' className={classNames('d-flex justify-between w100', {
                 'input-section': !withoutPass
             })}>
-                { !withoutPass &&
+                { !withoutPass && (
                     <InputField
                         name='current_password'
                         id='current_password'
@@ -103,11 +107,9 @@ const Second = ({
                         onChange={formik.handleChange}
                         error={formik.touched.current_password && formik.errors.current_password}
                     />
-                }
+                )}
                 <InputField
-                    className={classNames("phoneMask", {
-                        'widthFull': withoutPass
-                    })}
+                    className={classNames("phoneMask", { 'widthFull': withoutPass })}
                     label={withoutPass ? 'Add New Phone Number': "New Phone Number"}
                     error={formik.touched.phoneNumber && formik.errors.phoneNumber}
                     element={<PhoneMask
@@ -123,11 +125,8 @@ const Second = ({
                         autoComplete="off"
                     />}
                 />
-
             </form>
-            <div className={classNames('btn-field', {
-                'alignCenter': withoutPass
-            })}>
+            <div className={classNames('btn-field', { 'alignCenter': withoutPass })}>
                 <NormalBtn
                     loading={loading}
                     className='outlined bg-lighthouse-black mob-fullWidth'

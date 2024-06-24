@@ -1,17 +1,14 @@
-import EditSvgIcon from "@/public/assets/svgIcons/EditSvgIcon";
-import DeleteSvgIcon from "@/public/assets/svgIcons/DeleteSvgIcon";
-import { getTotalFormat } from "@/utils/helpers";
 import { useRef } from "react";
+import { getTotalFormat } from "@/utils/helpers";
 
-export default function VehicleTableMobile({
-    loading,
-    vehicles,
-    handleEdit,
-    handleDelete,
-    cost
-}) {
+import DeleteSvgIcon from "@/public/assets/svgIcons/DeleteSvgIcon";
+import EditSvgIcon from "@/public/assets/svgIcons/EditSvgIcon";
+import classNames from "classnames";
+
+export default function VehicleTableMobile({ loading, vehicles, handleEdit, handleDelete, cost }) {
     const sectionEndElmRef = useRef(null);
 
+    // Function to scroll into the end element of the section.
     const scrollIntoEndElem = () => {
         if(sectionEndElmRef.current) {
             sectionEndElmRef.current.scrollIntoView({
@@ -68,15 +65,18 @@ export default function VehicleTableMobile({
                                         }}>
                                         <EditSvgIcon/>
                                     </button>
-                                    <button disabled={loading} className={`${loading ? "disableBtn": ""}`} onClick={() => handleDelete(el.id)}>
+                                    <button
+                                        disabled={loading}
+                                        onClick={() => handleDelete(el.id)}
+                                        className={classNames({ disableBtn: loading })}
+                                    >
                                         <DeleteSvgIcon/>
                                     </button>
                                 </td>
                             </tr>
                         )) :
                         <tr>
-                            <td className="font16" colSpan={7}>
-                            </td>
+                            <td className="font16" colSpan={7} />
                         </tr>
                     }
                 </tbody>
@@ -90,5 +90,5 @@ export default function VehicleTableMobile({
             </table>
             <p ref={sectionEndElmRef}/>
         </div>
-    )
-}
+    );
+};

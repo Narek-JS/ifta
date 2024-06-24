@@ -37,6 +37,7 @@ export default function Questionnaire() {
     const questionOneRef = useRef(null);
     const questionTwoRef = useRef(null);
 
+    // Fetch permit ID and corresponding questionnaires on component mount.
     useEffect(() => {
         dispatch(setQuestionnaireLoading(true))
         dispatch(getPermitId())
@@ -45,6 +46,7 @@ export default function Questionnaire() {
                     dispatch(getQuestionnaires(res?.payload?.data?.form_id))
                         .then((resQuestionnaires) => {
                             if(resQuestionnaires?.payload?.result?.action === false) {
+                                // Notify and redirect in case of error
                                 toast.error(resQuestionnaires?.payload?.result?.message, {
                                     position: toast.POSITION.TOP_RIGHT
                                 });
@@ -55,12 +57,14 @@ export default function Questionnaire() {
                 } else {
                     router.push('/form/carrier-info')
                 }
-            })
+            });
+
         return () => {
-            dispatch(setQuestionnaireLoading(false))
-        }
+            dispatch(setQuestionnaireLoading(false));
+        };
     }, []);
 
+    // Update states based on retrieved questionnaire data.
     useEffect(() => {
         if (questionnaires) {
             setStorage(storageData.questionnaire_answer?.answer?.length ? storageData.questionnaire_answer?.answer : [{state: '', city: ''}]);
@@ -69,40 +73,46 @@ export default function Questionnaire() {
             setQuestions(questionsData.map(el => ({
                 question: el.id,
                 answer: el.questionnaire_answer?.answer?.[0] || "no"
-            })))
+            })));
+
             if (storageData.questionnaire_answer?.answer) {
-                setCondition1(storageData.questionnaire_answer?.answer.length ? "yes": "no")
+                setCondition1(storageData.questionnaire_answer?.answer.length ? "yes": "no");
             } else {
-                setCondition1("no")
-            }
-            setCheckCondition(checkData.map(el => el.questionnaire_answer?.answer?.length ? "yes" : "no"))
-        }
+                setCondition1("no");
+            };
+            setCheckCondition(checkData.map(el => el.questionnaire_answer?.answer?.length ? "yes" : "no"));
+        };
     }, [questionnaires]);
 
+    // Handle next step button click.
     const handleNextStep = () => {
         let allData = [];
         let newAllErrors = [];
         let newStorageErrors = [];
 
+        // Validate storage data if condition1 is 'yes'.
         if(condition1 === "yes"){
             storage.forEach((item, index) => {
                 newStorageErrors[index] = {
                     state: item.state ? "" : "Required",
                     city: item.city ? "" : "Required"
-                }
+                };
             });
             const isError = newStorageErrors.some(el => el.state || el.city);
-            newAllErrors.push({id: storageData.id, error: isError})
-        }
+            newAllErrors.push({ id: storageData.id, error: isError });
+        };
 
+        // Handle storage data errors.
         if (newStorageErrors.some(el => el.state || el.city)) {
             setStorageErrors(newStorageErrors);
-            window.scrollTo({ top: 0, behavior: "smooth" })
+            window.scrollTo({ top: 0, behavior: "smooth" });
         } else {
+            // Prepare data for submission.
             allData.push({
                 question: storageData.id,
                 answer: condition1 === "yes" ? (storage.every(el => el.state && el.city) ? storage: null) : null
             });
+
             const checkAnswers = checkData.map((el, i) => {
                 newAllErrors.push({
                     id: el.id,
@@ -114,8 +124,9 @@ export default function Questionnaire() {
                     answer: checkCondition[i] === 'yes' ? checks[i] : [],
                 }
             });
-            allData.push(...checkAnswers, ...questions.map(el => ({question: el.question, answer: [el.answer]})));
+            allData.push(...checkAnswers, ...questions.map(el => ({ question: el.question, answer: [el.answer] })));
 
+            // Validate all questions.
             questions.forEach((el, i) => {
                 newAllErrors.push({
                     id: el.question,
@@ -123,6 +134,7 @@ export default function Questionnaire() {
                 })
             });
 
+            // Set errors and submit data if no errors found.
             setErrors(newAllErrors);
             if (!newAllErrors.some(el => el.error)) {
                 setLoading(true)
@@ -138,6 +150,7 @@ export default function Questionnaire() {
                         }
                     })
             } else {
+                // Scroll to first encountered error.
                 const errorEL = newAllErrors.find(el => el.error);
                 switch(errorEL?.id) {
                     case 2:
@@ -152,12 +165,15 @@ export default function Questionnaire() {
                 };
             };
         }
-    }
+    };
+
+    // hNADLE Previous Step button click.
+    const handlePreviousStep = () => {
+        router.push("/form/carrier-info" + (permit_id ? `?permitId=${permit_id}` : ''));
+    };
 
     return (
-        <main className={classNames("formPage mPadding grayBG", {
-            'pointer-eventsNone': loading
-        })}>
+        <main className={classNames("formPage mPadding grayBG", { 'pointer-eventsNone': loading })}>
             <div className="formPageCard"> 
                 <h1 className="formTitle font24 line24 textCenter" style={{ background: "#FFFFFF" }}>
                     <span className="primary">IFTA Application Form</span>
@@ -213,9 +229,7 @@ export default function Questionnaire() {
                     ))}
                 </div>
                 <div className="steBtns flexBetween mt20">
-                    <NormalBtn onClick={() => {
-                        router.push("/form/carrier-info" + (permit_id ? `?permitId=${permit_id}` : ''))
-                    }} className="prevStep gap5 bg-lighthouse-black outlined">
+                    <NormalBtn onClick={handlePreviousStep} className="prevStep gap5 bg-lighthouse-black outlined">
                         <NextSvgIcon/>
                         Previous Step
                     </NormalBtn>
@@ -226,5 +240,5 @@ export default function Questionnaire() {
                 </div>
             </div>
         </main>
-    )
-}
+    );
+};

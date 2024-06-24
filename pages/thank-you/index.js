@@ -1,30 +1,35 @@
 import { clearPaymentStatus, selectPaymentStatus } from "@/store/slices/payment";
 import { clearTaxReturnPeriod } from "@/store/slices/resgister";
+import { IFTA_EMAIL, IFTA_PHONE, IFTA_PHONE_MASK } from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { Fragment, useEffect } from 'react';
 import { useRouter } from "next/router";
 
-import { IFTA_EMAIL, IFTA_PHONE } from "@/utils/constants";
 import Link from "next/link";
-
-import styles from './styles.module.scss';
+import styles from '@/styles/thankYouStyle.module.scss';
+import Cookies from "js-cookie";
 
 export default function ThankYou() {
+    const router = useRouter();
     const dispatch = useDispatch();
     const paymentStatus = useSelector(selectPaymentStatus);
 
-    const router = useRouter();
- 
+    // useEffect to check the payment status and clear state on unmount.
     useEffect(() => {
         if(paymentStatus !== 'success') {
+            // Navigate back if the payment status is not successful.
             router.back();
         };
 
         return () => {
+            // Clear payment status and clear tax return period on unmount.
             dispatch(clearPaymentStatus());
             dispatch(clearTaxReturnPeriod());
         };
     }, []);
+
+    // Check if the payment is succesfuly and come from Sponsored.
+    const isShowGoogleAnalitic = Boolean(paymentStatus === 'success' && Cookies.get('_gcl_aw'));
 
     return (
         <Fragment>
@@ -38,9 +43,10 @@ export default function ThankYou() {
                     </p>
                     <p>
                         If you have any questions about our work or want to check on the status of your order, feel free to
-                        get in touch with our team! You can contact us via phone at <Link href={`tel:${IFTA_PHONE}`}>(800) 341 - 2870</Link>, email
-                        at &nbsp;
-                        <Link href={`mailto:${IFTA_EMAIL}`}>{IFTA_EMAIL}</Link>, or our <Link href="/contact-us">Contact us page</Link>.
+                        get in touch with our team! You can contact us via phone at &nbsp;
+                        <Link href={`tel:${IFTA_PHONE}`}>{IFTA_PHONE_MASK}</Link>, email at &nbsp; 
+                        <Link href={`mailto:${IFTA_EMAIL}`}>{IFTA_EMAIL}</Link>, or our &nbsp;
+                        <Link href="/contact-us">Contact us page</Link>.
                         We’ll be happy to help you resolve any
                         questions you may have.
                     </p>
@@ -48,16 +54,18 @@ export default function ThankYou() {
                     <Link href="/history" className={styles.goBackBtn}>Go to Billing History</Link>
                 </div>
             </div>
-            <script dangerouslySetInnerHTML={{
-                __html: `
-                    gtag('event', 'conversion', {
-                        'send_to': 'AW-414658176/L5bGCMOCr_EYEIDd3MUB',
-                        'value': 0.0,
-                        'currency': 'USD',
-                        'transaction_id': ''
-                    });
-                `,
-            }} />
+            {isShowGoogleAnalitic && (
+                <script dangerouslySetInnerHTML={{
+                    __html: `
+                        gtag('event', 'conversion', {
+                            'send_to': 'AW-414658176/L5bGCMOCr_EYEIDd3MUB',
+                            'value': 0.0,
+                            'currency': 'USD',
+                            'transaction_id': ''
+                        });
+                    `,
+                }} />
+            )}
         </Fragment>
     );
 };

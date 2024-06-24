@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { useSelector } from "react-redux";
 import { selectIsUser } from "@/store/slices/auth";
-import { IFTA_EMAIL, IFTA_PHONE } from "@/utils/constants";
+import { IFTA_EMAIL, IFTA_PHONE, IFTA_PHONE_MASK } from "@/utils/constants";
 import PhoneSvgIcon from "@/public/assets/svgIcons/PhoneSvgIcon";
 import EmailSvgIcon from "@/public/assets/svgIcons/EmailSvgIcon";
 import classNames from "classnames";
@@ -16,8 +16,8 @@ export default function TopPanel({ topPanel, width, staticTopPanel }) {
             className={classNames('topPanel mPadding flex gap40 alignCenter printNone', { staticTopPanel })}
         >
             <Link href={`tel:${IFTA_PHONE}`} className="contactItem flexBetween alignCenter gap5 primary">
-                <PhoneSvgIcon/>
-                <b className="font18 weight500">( 800 ) 341 - 2870</b>
+                <PhoneSvgIcon />
+                <b className="font18 weight500">{IFTA_PHONE_MASK}</b> 
             </Link>
             { isAuth || Number(width) > 768 ? (
                 <Fragment>

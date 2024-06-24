@@ -20,7 +20,9 @@ export default function Services() {
                     img={about.sections[1].img}
                 />
             </div>
-            <Help width='initial'/>
+
+            <Help width='initial' />
+
             <div className="mPadding lastInfo">
                 <InfoSection
                     subTitle={about.sections[2].subtitle}

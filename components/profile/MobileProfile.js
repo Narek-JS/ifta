@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import EmailAddresses from "@/components/profile/emailAddresses";
 import ChangePassword from "@/components/profile/changePassword";
 import NextSvgIcon from "@/public/assets/svgIcons/NextSvgIcon";
@@ -66,7 +66,7 @@ const MobileProfile = ({ accountDetails }) => {
                 </div>
             )}
             <div className='profile-boxes'>
-                {step === 1 && <ContactName onPrimaryDetails={() => setStep(0)}/>}
+                {step === 1 && <ContactName onPrimaryDetails={() => setStep(0)} />}
                 {step === 2 && <EmailAddresses onPrimaryDetails={() => setStep(0)} email={accountDetails?.email}/>}
                 {step === 3 && <PhoneNumbers
                     withoutPass={Boolean(accountDetails?.google)}

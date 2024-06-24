@@ -4,10 +4,12 @@ import { useDispatch } from "react-redux";
 export default function FooterSmall() {
     const dispatch = useDispatch();
 
+    // Function to open the terms and conditions popup.
     const openTermsPopup = () => {
         dispatch(setPopUp({ popUp: 'termsPopup' }));
     };
 
+    // Function to open the privacy policy popup
     const openPrivacyPopup = () => {
         dispatch(setPopUp({ popUp: 'privacy-policy' }));
     };

@@ -5,16 +5,17 @@ import Reply from "@/components/posts/Reply";
 import PostItem from "@/components/posts/PostItem";
 import Loader from "@/components/universalUI/Loader";
 import UserSvgIcon from "@/public/assets/svgIcons/UserSvgIcon";
-import React, { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from "react-share";
-import { MessageIcon } from "@/public/assets/svgIcons/MessageIcon";
+import { RightArrowToGo } from "@/public/assets/svgIcons/RightArrowToGo";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { CalendarIcon } from "@/public/assets/svgIcons/CalendarIcon";
 import { FacebookIcon } from "@/public/assets/svgIcons/FacebookIcon";
-import { TwitterIcon } from "@/public/assets/svgIcons/TwitterIcon";
 import { LinkedinIcon } from "@/public/assets/svgIcons/LinkedinIcon";
+import { MessageIcon } from "@/public/assets/svgIcons/MessageIcon";
+import { TwitterIcon } from "@/public/assets/svgIcons/TwitterIcon";
 import { dateFormat, ImageLoader } from "@/utils/helpers";
-import { useRouter } from "next/router";
 import { API_URL } from "@/utils/constants";
+import { useRouter } from "next/router";
 
 // Function to get comments JSX
 const getCommentJSX = (comment) => (
@@ -67,9 +68,7 @@ export default function SinglePost({ postData, latestPostsData }) {
       <div ref={commentRef} className="related-posts comments mb30">
         <div className="flex gap10 alignCenter mb30">
           <p className="arrow-right color-s">
-            <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path stroke="#072765" d="M1 2L15 10.3478L1 18" strokeWidth="3" strokeLinejoin="round" />
-            </svg>
+            <RightArrowToGo stroke="#072765" />
           </p>
           <p className="secondary weight700 font24">Responses ({data.comment.length})</p>
         </div>
@@ -87,9 +86,7 @@ export default function SinglePost({ postData, latestPostsData }) {
       <div className="related-posts mb30">
         <div className="flex gap10 alignCenter mb30">
           <p className="arrow-right color-s">
-            <svg width="17" height="20" viewBox="0 0 17 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 2L15 10.3478L1 18" stroke="#F3BD1B" strokeWidth="3" strokeLinejoin="round" />
-            </svg>
+            <RightArrowToGo stroke="#F3BD1B" />
           </p>
           <p className="primary weight700 font24">You Might Also Like</p>
         </div>
@@ -124,16 +121,19 @@ export default function SinglePost({ postData, latestPostsData }) {
         <meta property="og:type" content="website" data-rh="true" />
         <meta property="og:image" content={data.image} data-rh="true" />
       </Head>
+
       <main className="page-main mPadding sectionPadding single-post">
         <div className="flexBetween gap40">
           <div className="left-side">
             <div className="title1 flex gap10 alignCenter mb30">
-              <h1 className="font20 lighthouse-black">{data.category?.name}hahahah</h1>
+              <h1 className="font20 lighthouse-black">{data.category?.name}</h1>
               <hr />
             </div>
+
             <div className="main-img mb20">
               <Image width={780} height={520} src={data.image} loader={ImageLoader} alt="post" />
             </div>
+
             <div className="flexBetween alignCenter date-socials mb30">
               <div className='flex alignCenter date gap10'>
                 <CalendarIcon />
@@ -147,6 +147,7 @@ export default function SinglePost({ postData, latestPostsData }) {
                   <span className="primary60">{data?.comment?.length || 0}</span>
                 </div>
               </div>
+
               <div className="social-sharing flexBetween alignCenter gap20 font18">
                 <b className="primary80 font20">Share</b>
                 <FacebookShareButton url={url} quote={"フェイスブックはタイトルが付けれるようです"} hashtag={"#hashtag"} description={"aiueo"}>
@@ -160,6 +161,7 @@ export default function SinglePost({ postData, latestPostsData }) {
                 </LinkedinShareButton>
               </div>
             </div>
+
             <h2 className='font32 primary weight700 postTitle mb30 line34'>{data.title}</h2>
             <div className="content mb20 primary" dangerouslySetInnerHTML={{ __html: data.body }}></div>
 
@@ -185,10 +187,8 @@ export default function SinglePost({ postData, latestPostsData }) {
 }
 
 // Fetch data on the server-side
-async function getServerSideProps(context) {
+export async function getServerSideProps(context) {
   const { slug, category_id } = context.query;
-  console.log('slug, category_id --> ', {slug, category_id});
-  
   // Fetch single post data
   const postResponse = await fetch(`${API_URL}/posts/${slug}`);
   const postData = await postResponse.json();

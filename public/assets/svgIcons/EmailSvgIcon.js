@@ -1,6 +1,5 @@
-export default function EmailSvgIcon () {
-
-    return(
+export default function EmailSvgIcon() {
+    return (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <g clipPath="url(#clip0_1727_16802)">
                 <rect width="24" height="24" fill="black" fillOpacity="0.7"/>
@@ -13,5 +12,5 @@ export default function EmailSvgIcon () {
                 </clipPath>
             </defs>
         </svg>
-    )
-}
+    );
+};

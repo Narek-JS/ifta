@@ -1,3 +1,4 @@
+import { PasswordEyeClose, PasswordEyeOpen } from "@/public/assets/svgIcons/passwordEye";
 import { forwardRef, useState } from "react";
 import classNames from "classnames";
 
@@ -19,85 +20,72 @@ const InputField = forwardRef(function ({
     disabled,
     params,
     eye,
-    toogleIsOpenLeatter,
     autoComplete = 'off',
     width,
     defaultValue = '',
-    onClick,
+    onClick = () => {},
     loading,
-    mobileLableWrap,
+    toogleIsOpenLeatter, // Function to toggle the visibility of the password letters.
+    mobileLableWrap, // Flag to enable wrapping of label text on mobile devices.
     ...props
 }, ref) {
-
     const [show, setShow] = useState(false);
-    const classN = classNames('inputField', className, {
-        additional: element || type === 'password',
-        widthFull: width === 'full',
-    });
+
+    // Function to toggle password visibility.
+    const togglePasswordVisibility = () => {
+        setShow(!show);
+
+        // Invoking the function to toggle password letter visibility if provided.
+        toogleIsOpenLeatter && toogleIsOpenLeatter();
+    };
 
     return (
-        <div className={classN}>
-            <label 
-                onClick={onClick ? onClick : () => {}}
-            >
+        <div className={classNames('inputField', className, {
+            additional: element || type === 'password',
+            widthFull: width === 'full',
+        })}>
+            <label onClick={onClick}>
+                {/* Label section */}
                 <p className={classNames("helper mb5 bold500 font16 line24 flex white-space-nowrap", {
                     'white-space-wrap-mobile': mobileLableWrap 
                 })}>
                     {label}
-                    {required ? <sup className="red font16">*</sup> : ""}
+
+                    {/* Displaying required indicator if 'required' prop is true */}
+                    {required && (
+                        <sup className="red font16">*</sup>
+                    )}
                 </p>
-                {element || <input
-                    {...((Boolean(defaultValue) && !Boolean(value)) && { defaultValue })}
-                    autoComplete={autoComplete}
-                    type={type === "password" ? show ? "text" : "password" : type}
-                    value={value}
-                    onChange={onChange}
-                    onFocus={onFocus}
-                    maxLength={maxLength || params?.maxLength || 50}
-                    ref={ref}
-                    id={id}
-                    onBlur={onBlur}
-                    name={name}
-                    placeholder={placeholder}
-                    disabled={disabled}
-                    className=''
-                    {...params}
-                    {...props}
-                />}
-                {type === "password" || eye ?
-                    <div
-                        className="showIcon"
-                        onClick={() => {
-                            setShow(!show)
-                            toogleIsOpenLeatter && toogleIsOpenLeatter()
-                        }}
-                    >{
-                            show ?
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <g clipPath="url(#clip0_10_10564)">
-                                        <path
-                                            d="M14.9424 7.79112C13.4446 5.02224 10.818 3.34668 7.91131 3.34668C5.00465 3.34668 2.37354 5.02224 0.889093 7.79112L0.764648 8.00001L0.880204 8.21335C2.37798 10.9822 5.00465 12.6578 7.91131 12.6578C10.818 12.6578 13.4491 11.0045 14.9424 8.21335L15.058 8.00001L14.9424 7.79112ZM7.91131 11.7467C5.40909 11.7467 3.11132 10.3511 1.77798 8.00001C3.11132 5.6489 5.40909 4.25335 7.91131 4.25335C10.4135 4.25335 12.6846 5.65335 14.0402 8.00001C12.6846 10.3511 10.4091 11.7467 7.91131 11.7467Z"
-                                            fill="#000" />
-                                        <path
-                                            d="M8.04031 4.96444C7.4377 4.96883 6.8499 5.15172 6.35116 5.48998C5.85243 5.82825 5.46512 6.30673 5.23816 6.86499C5.0112 7.42325 4.95477 8.03624 5.076 8.62656C5.19722 9.21687 5.49066 9.75801 5.91926 10.1816C6.34786 10.6053 6.89239 10.8924 7.48407 11.0067C8.07575 11.1211 8.68805 11.0575 9.24363 10.8241C9.79921 10.5906 10.2731 10.1978 10.6056 9.69514C10.938 9.1925 11.114 8.60262 11.1114 7.99999C11.1097 7.59885 11.0288 7.202 10.8734 6.83218C10.718 6.46236 10.4912 6.12683 10.2059 5.84484C9.92057 5.56284 9.58242 5.33992 9.21082 5.18884C8.83921 5.03777 8.44144 4.96151 8.04031 4.96444ZM8.04031 10.1733C7.61465 10.1689 7.19977 10.0389 6.84778 9.79946C6.4958 9.56006 6.2224 9.22198 6.06193 8.8277C5.90146 8.43342 5.86107 8.00051 5.94583 7.58335C6.03059 7.16618 6.23672 6.78337 6.53834 6.48298C6.83996 6.18258 7.22362 5.97801 7.64112 5.89495C8.05863 5.8119 8.49137 5.85406 8.88499 6.01614C9.27862 6.17822 9.61557 6.45299 9.85354 6.80595C10.0915 7.15891 10.2199 7.57431 10.2225 7.99999C10.2237 8.28648 10.168 8.57035 10.0587 8.83515C9.9493 9.09995 9.78847 9.3404 9.58547 9.54257C9.38248 9.74473 9.14137 9.90459 8.87613 10.0129C8.61089 10.1211 8.32679 10.1757 8.04031 10.1733Z"
-                                            fill="#000" />
-                                    </g>
-                                    <defs>
-                                        <clipPath id="clip0_10_10564">
-                                            <rect width="16" height="16" fill="white" />
-                                        </clipPath>
-                                    </defs>
-                                </svg> :
-                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M8.92969 3.64685C8.62448 3.61384 8.31436 3.59492 8 3.59021C6.62633 3.59631 5.20236 3.93044 3.85449 4.57069C2.85372 5.06565 1.87885 5.76441 1.03223 6.62635C0.616427 7.06635 0.0857467 7.70344 0 8.38317C0.0101333 8.972 0.64204 9.69877 1.03223 10.14C1.82613 10.9681 2.77561 11.6469 3.85449 12.1957C3.89116 12.2135 3.92796 12.2311 3.96484 12.2484L2.96388 13.9964L4.32395 14.8003L11.6762 1.99981L10.367 1.19971L8.92969 3.64685ZM12.0342 4.51991L11.0351 6.25133C11.4947 6.84843 11.7676 7.58475 11.7676 8.38317C11.7676 10.3733 10.0806 11.9867 7.99901 11.9867C7.90903 11.9867 7.82181 11.977 7.73339 11.9711L7.07225 13.1156C7.37716 13.1483 7.68545 13.172 7.99999 13.1761C9.37496 13.17 10.7981 12.832 12.1445 12.1957C13.1453 11.7007 14.1211 11.002 14.9678 10.14C15.3836 9.70004 15.9142 9.06293 16 8.38317C15.9899 7.79436 15.3579 7.06759 14.9678 6.62633C14.1739 5.79825 13.2234 5.11949 12.1445 4.57067C12.1081 4.55301 12.0708 4.53713 12.0342 4.51991ZM7.99903 4.77968C8.09031 4.77968 8.18087 4.78333 8.27051 4.78944L7.49609 6.13025C6.40924 6.3506 5.59375 7.27532 5.59375 8.38221C5.59375 8.66027 5.64496 8.92647 5.73925 9.17321C5.73936 9.17349 5.73915 9.17392 5.73925 9.1742L4.96288 10.5189C4.5022 9.92128 4.23045 9.18253 4.23045 8.38316C4.23047 6.39309 5.91744 4.77967 7.99903 4.77968ZM10.2519 7.60681L8.50684 10.6303C9.58785 10.4058 10.3975 9.48525 10.3975 8.38221C10.3975 8.10923 10.343 7.84969 10.2519 7.60681Z"
-                                        fill="#000" />
-                                </svg>
-                        }</div>
-                    : ""
-                }
+
+                {/* Input element */}
+                {element || (
+                    <input
+                        {...((Boolean(defaultValue) && !Boolean(value)) && { defaultValue })}
+                        autoComplete={autoComplete}
+                        type={type === "password" ? show ? "text" : "password" : type}
+                        value={value}
+                        onChange={onChange}
+                        onFocus={onFocus}
+                        maxLength={maxLength || params?.maxLength || 50}
+                        ref={ref}
+                        id={id}
+                        onBlur={onBlur}
+                        name={name}
+                        placeholder={placeholder}
+                        disabled={disabled}
+                        {...params}
+                        {...props}
+                    />
+                )}
+
+                {/* Password visibility toggle icon */}
+                {(type === "password" || eye) && (
+                    <div className="showIcon" onClick={togglePasswordVisibility}>
+                        { show ? <PasswordEyeOpen /> : <PasswordEyeClose /> }
+                    </div>
+                )}
+
+                {/* Error message display */}
                 <p className="err-message">{error}</p>
             </label>
         </div>

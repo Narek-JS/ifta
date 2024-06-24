@@ -23,19 +23,28 @@ export default function ContactForm() {
             message: ''
         },
         onSubmit: (values, { resetForm }) => {
+            // Set loading state to true on form submission.
             setLoading(true);
+
+            // Dispatch ContactUs action with form values.
             dispatch(ContactUs(values))
                 .then(res => {
                     if (res?.payload?.action) {
+                        // Show success toast notification.
                         toast.success(res.payload?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
+
+                        // Reset form values.
                         resetForm();
                     } else {
+                        // Show error toast notification.
                         toast.error(res.payload?.result?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                     };
+
+                    // Set loading state to false after submission
                     setLoading(false);
                 });
         },

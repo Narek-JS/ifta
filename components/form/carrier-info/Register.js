@@ -1,15 +1,17 @@
+import { getQuarter, selectTaxReturnPeriodStatus } from "@/store/slices/resgister";
+import { VerificationContext } from "@/contexts/VerificationCarrierInfoContext";
+import { Autocomplete, Checkbox, TextField } from "@mui/material";
+import { QUARTERLY_FILLING_ID } from "@/utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { useContext, useMemo } from "react";
+import { styled } from '@mui/system';
+
 import InputField from "@/components/universalUI/InputField";
 import PhoneMask from "@/components/universalUI/PhoneMask";
 import PopupIcon from "@/public/assets/svgIcons/PopupIcon";
-import { getQuarter, selectTaxReturnPeriodStatus } from "@/store/slices/resgister";
-import { QUARTERLY_FILLING_ID } from "@/utils/constants";
-import { Autocomplete, Checkbox, TextField } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { styled } from '@mui/system';
-import { useContext, useMemo } from "react";
 import classNames from "classnames";
-import { VerificationContext } from "@/contexts/VerificationCarrierInfoContext";
 
+// Styled component for group header in Autocomplete.
 const GroupHeader = styled('div')(() => ({
     position: 'sticky',
     top: '-8px',
@@ -33,8 +35,76 @@ export default function Register({
 
     const { loader, setVerified, setIsUnVerifyedState } = useContext(VerificationContext);
 
+    // Memoized quarterly period input.
     const quarterlyPariodInput = useMemo(() => {
-        return isQuarterlyApplicationType && Array.isArray(taxReturnPeriod?.lastTwoYearsQuarters) && (
+        // Check if it's a quarterly application and tax return period data exists.
+        if(!isQuarterlyApplicationType || !Array.isArray(taxReturnPeriod?.lastTwoYearsQuarters)) {
+            return null;
+        };
+
+        // Functions for rendering groups, options, and input.
+        const renderGroup = (params) => (
+            <li key={params.key}>
+                <GroupHeader>{params.group}</GroupHeader>
+                <ul>{params.children}</ul>
+            </li>
+        );
+
+        // Function to render each option in Autocomplete.
+        const renderOption = (props, option) => (
+            <li {...props}>
+                <Checkbox
+                    style={{ width: '10px', height: '10px', marginLeft: '-10px', marginRight: '5px' }}
+                    checked={Boolean(formik.values?.quarterly_pariod?.find(pariod => pariod.id === option.id))}
+                />
+                {option.name}
+            </li>
+        );
+
+        // Function to render the input field in Autocomplete.
+        const renderInput = (params) => {
+            // Get short string value for display.
+            let shortStrValue = '';
+            if(Array.isArray(formik.values?.quarterly_pariod)) {
+                shortStrValue = formik.values?.quarterly_pariod?.map(pariod => pariod?.name?.split(' ')[0]).join(', ');
+            };
+
+            // Return the input field with the short string value.
+            return (
+                <TextField
+                    {...params}
+                    inputProps={{ ...params?.inputProps, value: shortStrValue}}
+                    placeholder="Return Period"
+                />
+            );
+        };
+
+        // Handler for change in selection in the Autocomplete component.
+        const onChange = (event_, value_, reason_, details) => {
+            // Reset verification status.
+            setVerified(false);
+
+            // Copy the current values of quarterly period selection.
+            let newValues = [...(formik.values?.quarterly_pariod || [])];
+            const isSelected = formik.values?.quarterly_pariod?.find(pariod => pariod.id === details?.option?.id);
+
+            // Add or remove the selected option to the values array.
+            if(Array.isArray(newValues)) {
+                if(isSelected === undefined) {
+                    newValues.push(details.option);
+                } else {
+                    newValues = newValues?.filter(pariod => pariod?.id !== details?.option?.id) || [];
+                };
+
+                // Set the formik values with the updated quarterly period selection.
+                formik.setValues({
+                    ...formik.values,
+                    quarterly_pariod: newValues
+                });
+            };
+        };
+
+        return (
             <InputField
                 error={formik?.touched?.quarterly_pariod && formik?.errors?.quarterly_pariod}
                 label="Tax Return Period"
@@ -51,58 +121,12 @@ export default function Register({
                     name="quarterly_pariod"
                     onBlur={formik.handleBlur}
                     groupBy={(option) => option.year}
-                    renderGroup={(params) => (
-                        <li key={params.key}>
-                            <GroupHeader>{params.group}</GroupHeader>
-                            <ul>{params.children}</ul>
-                        </li>
-                    )}
-
-                    getOptionLabel={(option) => {
-                        return option.name;
-                    }}
-
-                    renderOption={(props, option, state) => {
-                        const defaultSelected = formik.values?.quarterly_pariod?.find(pariod => pariod.id === option.id);
-                        return (
-                            <li {...props}>
-                                <Checkbox
-                                    style={{ width: '10px', height: '10px', marginLeft: '-10px', marginRight: '5px' }}
-                                    checked={Boolean(defaultSelected)}
-                                />
-                                {option.name}
-                            </li>
-                        );
-                    }}
-
-                    renderInput={(params) => {
-                        let shortStrValue = '';
-                        if(Array.isArray(formik.values?.quarterly_pariod)) {
-                            shortStrValue = formik.values?.quarterly_pariod?.map(pariod => pariod?.name?.split(' ')[0]).join(', ');
-                        };
-
-                        return (
-                            <TextField {...params} inputProps={{ ...params?.inputProps, value: shortStrValue}} placeholder="Return Period" />
-                        );
-                    }}
-
-                    onChange={(event_, value, reason, details) => {
-                        setVerified(false);
-                        let newValues = [...(formik.values?.quarterly_pariod || [])];
-                        const isSelected = formik.values?.quarterly_pariod?.find(pariod => pariod.id === details?.option?.id);
-                        if(Array.isArray(newValues)) {
-                            if(isSelected === undefined) {
-                                newValues.push(details.option);
-                            } else {
-                                newValues = newValues?.filter(pariod => pariod?.id !== details?.option?.id) || [];
-                            };
-                            formik.setValues({
-                                ...formik.values,
-                                quarterly_pariod: newValues
-                            });
-                        }
-                    }}
-                    slotProps={{popper: {sx: {zIndex: 98}}}}
+                    renderGroup={renderGroup}
+                    getOptionLabel={(option) => option.name}
+                    renderOption={renderOption}
+                    renderInput={renderInput}
+                    onChange={onChange}
+                    slotProps={{ popper: { sx: { zIndex: 98 } } }}
                 />}
             />
         );
@@ -113,6 +137,56 @@ export default function Register({
         isQuarterlyApplicationType,
         taxReturnPeriod
     ]);
+
+    // Handler for application type change
+    const handleAppTypeChange = (e, applyingFor) => {
+        setVerified(false);
+        setIsUnVerifyedState(true);
+
+        // Set IRP account value.
+        irpFormik.setValues(prev => {
+            prev.irpAccount = '1';
+            return prev;
+        });
+
+        // Set application type value.
+        formik.setValues(prev => {
+            prev.application_type = applyingFor;
+            return prev;
+        });
+
+        // Check if the application type is quarterly filing and if, set flag for quarterly application type.
+        if(applyingFor?.id === QUARTERLY_FILLING_ID) {
+            setIsQuarterlyApplicationType(true);
+
+            // Fetch quarterly data if not fetched already.
+            if(taxReturnPeriod === null && taxReturnPeriodStatus === '') {
+                dispatch(getQuarter());
+            };
+        } else {
+            // Clear flag for quarterly application type.
+            setIsQuarterlyApplicationType(false);
+        };
+    };
+
+    // Handler for application type input change.
+    const handleAppTypeInputChange = (e) => {
+        if(e?.target){
+            e.target.value = formik.values.application_type?.name || ""
+        };
+    };
+
+    // Handler for state change
+    const hadnleStateChange = (e, state) => {
+        setVerified(false);
+        setIsUnVerifyedState(true);
+        
+        // Set new state values.
+        formik.setValues({
+            ...formik.values,
+            state: state || ""
+        });
+    };
 
     return (
         <div className={classNames("formRegister", { 'pointer-eventsNone': loader })}>
@@ -154,34 +228,8 @@ export default function Register({
                     required={true}
                     disabled={true}
                     element={<Autocomplete
-                        onChange={(e, applyingFor) => {
-                            setVerified(false);
-                            setIsUnVerifyedState(true);
-                            irpFormik.setValues(prev => {
-                                prev.irpAccount = '1';
-                                return prev;
-                            });
-
-                            formik.setValues(prev => {
-                                prev.application_type = applyingFor;
-                                return prev;
-                            });
-
-                            if(applyingFor?.id === QUARTERLY_FILLING_ID) {
-                                setIsQuarterlyApplicationType(true);
-                                if(taxReturnPeriod === null && taxReturnPeriodStatus === '') {
-                                    dispatch(getQuarter());
-                                };
-                            } else {
-                                setIsQuarterlyApplicationType(false);
-                            };
-
-                        }}
-                        onInputChange={(e)=> {
-                            if(e?.target){
-                                e.target.value = formik.values.application_type?.name || ""
-                            }
-                        }}
+                        onChange={handleAppTypeChange}
+                        onInputChange={handleAppTypeInputChange}
                         inputValue={formik.values.application_type?.name || ''}
                         filterOptions={(options) => options}
                         loading={!appTypes}
@@ -194,7 +242,7 @@ export default function Register({
                         getOptionLabel={type => String(type?.name || type)}
                         isOptionEqualToValue={(option, value) => option.id === value}
                         renderInput={(params) => <TextField {...params} placeholder="Select type"/>}
-                        slotProps={{popper: {sx: {zIndex: 98}}}}
+                        slotProps={{ popper: { sx: { zIndex: 98 } } }}
                     />}
                 />
 
@@ -205,27 +253,18 @@ export default function Register({
                     label="Base State"
                     required={true}
                     element={<Autocomplete
-                        onChange={(e, state) => {
-                            setVerified(false);
-                            setIsUnVerifyedState(true);
-                            formik.setValues({
-                                ...formik.values,
-                                state: state || ""
-                            })
-                        }}
+                        onChange={hadnleStateChange}
                         loading={!baseStates}
                         onBlur={formik.handleBlur}
                         value={formik.values.state || null}
                         popupIcon={<PopupIcon/>}
                         options={baseStates || []}
-                        getOptionLabel={type => {
-                            return String(type.state || type);
-                        }}
+                        getOptionLabel={type => String(type.state || type)}
                         isOptionEqualToValue={(option, value) => option.id === value}
                         id="state"
                         name="state"
                         renderInput={(params) => <TextField {...params} placeholder="Select Base State"/>}
-                        slotProps={{popper: {sx: {zIndex: 98}}}}
+                        slotProps={{ popper: { sx: { zIndex: 98 } } }}
                     />}
                 />
             </form>

@@ -14,12 +14,14 @@ export default function Help({ width: titleWidth }) {
     const { width } = useWindowSize();
     const [ position, setPosition ] = useState(0);
 
+    // Effect to calculate and update the position state when the pathname changes or when the component mounts.
     useEffect(() => {
         if(pathname === "/") {
             const handleScroll = () => {
                 const position = ref.current.getBoundingClientRect().top + document.body.getBoundingClientRect().top;
                 setPosition(position);
             };
+
             if(ref) {
                 window.addEventListener("scroll", handleScroll);
                 return () => window.removeEventListener("scroll", handleScroll);
@@ -27,14 +29,16 @@ export default function Help({ width: titleWidth }) {
         };
     }, [ref, pathname]);
 
+    // Function to calculate the horizontal position of the helpTitle div based on scroll position and window width.
     const getHorizontalPosition = () => {
-        const SPEED = 5;
-        const SCREEN_CONTAINER = 1920;
-        const MAX_DISPLACEMENT_FACTOR = 600;
+        const SPEED = 5; // Speed factor for the horizontal movement.
+        const SCREEN_CONTAINER = 1920; // Width of the screen container.
+        const MAX_DISPLACEMENT_FACTOR = 600; // Maximum displacement factor for the title width.
 
-        const positionTop = -position / SPEED;
-        const positionBottom =  width * MAX_DISPLACEMENT_FACTOR / SCREEN_CONTAINER;
+        const positionTop = -position / SPEED; // Calculate position based on scroll position.
+        const positionBottom =  width * MAX_DISPLACEMENT_FACTOR / SCREEN_CONTAINER; // Calculate position based on window width.
 
+        // Return the smaller of the two positions
         if(positionTop < positionBottom) {
             return positionTop;
         };
@@ -63,7 +67,8 @@ export default function Help({ width: titleWidth }) {
                 style={{
                     transform: `translateX(${getHorizontalPosition()}px)`,
                     ...(titleWidth && { width: titleWidth })
-                }}>
+                }}
+            >
                 <div className='flexCenter alignEnd'>
                     <h1 className="secondary">Your Helpful Team for All Things IFTA!</h1>
                     <TrucHelpSectionIcon />

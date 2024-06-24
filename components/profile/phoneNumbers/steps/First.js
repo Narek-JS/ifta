@@ -1,4 +1,3 @@
-import React from 'react';
 import NormalBtn from "@/components/universalUI/NormalBtn";
 import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
 

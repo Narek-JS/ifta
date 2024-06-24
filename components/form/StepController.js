@@ -1,6 +1,7 @@
 import { StepTransition } from "../universalUI/StepTransition";
 import { useStep } from "@/utils/hooks/useFormStep";
 import { Fragment, memo } from "react";
+
 import QuestionnaireSvgIcon from "@/public/assets/svgIcons/QuestionnaireSvgIcon";
 import PaymentSvgIcon from "@/public/assets/svgIcons/PaymentSvgIcon";
 import CarrierSvgIcon from "@/public/assets/svgIcons/CarrierSvgIcon";

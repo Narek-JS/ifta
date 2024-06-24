@@ -1,7 +1,8 @@
+import { useRef } from "react";
+import { getTotalFormat } from "@/utils/helpers";
+
 import EditSvgIcon from "@/public/assets/svgIcons/EditSvgIcon";
 import DeleteSvgIcon from "@/public/assets/svgIcons/DeleteSvgIcon";
-import { getTotalFormat } from "@/utils/helpers";
-import { useRef } from "react";
 
 export default function VehicleTable({
     loading,
@@ -13,6 +14,7 @@ export default function VehicleTable({
 }) {
     const sectionEndElmRef = useRef(null);
 
+    // Function to scroll into the end element of the section.
     const scrollIntoEndElem = () => {
         if(sectionEndElmRef.current) {
             sectionEndElmRef.current.scrollIntoView({
@@ -80,5 +82,5 @@ export default function VehicleTable({
             </table>
             <p ref={sectionEndElmRef} />
         </div>
-    )
-}
+    );
+};

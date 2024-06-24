@@ -410,6 +410,10 @@ a {
   width: 100%;
 }
 
+.w100-imp {
+  width: 100% !important;
+}
+
 .mx-140 {
   max-width: 135px !important;
 }
@@ -429,6 +433,10 @@ a {
 
 .min-150 {
   min-width: 150px !important;
+}
+
+.min-250 {
+  min-width: 250px !important;
 }
 
 .max-w-420 {
@@ -452,6 +460,9 @@ a {
   margin-right: 10px;
 }
 
+.max-h-55 {
+  max-height: 55px !important;
+}
 
 .none {
   display: none;

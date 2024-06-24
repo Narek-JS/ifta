@@ -1,12 +1,12 @@
-import React from 'react';
-import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
-import InputField from "@/components/universalUI/InputField";
-import NormalBtn from "@/components/universalUI/NormalBtn";
 import { changePassword } from "@/store/slices/profile";
 import { setAuth } from '@/store/slices/auth';
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+
+import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
+import InputField from "@/components/universalUI/InputField";
+import NormalBtn from "@/components/universalUI/NormalBtn";
 import * as Yup from "yup";
 
 const First = ({ setStep, onClick, step, loading, setLoading }) => {
@@ -19,24 +19,35 @@ const First = ({ setStep, onClick, step, loading, setLoading }) => {
             password_confirmation: ''
         },
         onSubmit: (values, { setErrors }) => {
-            setLoading(true)
+            // Set loading state to true during form submission.
+            setLoading(true);
+
+            // Dispatch action to change password.
             dispatch(changePassword(values))
                 .then(res => {
-                    setLoading(false)
+                    // Set loading state to false after form submission
+                    setLoading(false);
+
                     if(res.payload?.action) {
+                        // Display success message if password change is successful.
                         toast.success(res.payload.message, {
                             className: 'success-toaster'
                         });
+
+                        // Reset form after successful password change and update auth state with new data.
                         formik.resetForm();
                         if(res.payload?.data) {
                             dispatch(setAuth(res.payload?.data));
                         };
                     } else {
                         if(typeof res?.payload?.result?.data === 'object') {
+                            // Set form errors if any.
                             setErrors({
                                 ...res?.payload?.result?.data
                             });
                         };
+
+                        // Display error message if password change fails
                         toast.error(res?.payload?.result?.message)
                     };
                 });
@@ -46,8 +57,9 @@ const First = ({ setStep, onClick, step, loading, setLoading }) => {
             password: Yup.string().min(6, 'Too short !').required('New Password is required!'),
             password_confirmation: Yup.string().required('Please confirm your password').oneOf([Yup.ref('password'), null], 'Passwords do not match')
         })
-    })
+    });
 
+    // Function to navigate to the next step
     const goToNextStep = () => setStep(2);
 
     return (

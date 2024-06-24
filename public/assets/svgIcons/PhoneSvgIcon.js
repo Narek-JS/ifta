@@ -1,6 +1,5 @@
-export default function PhoneSvgIcon () {
-
-    return(
+export default function PhoneSvgIcon() {
+    return (
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
             <g clipPath="url(#clip0_1727_16796)">
                 <rect width="24" height="24" fill="black" fillOpacity="0.7"/>
@@ -14,5 +13,5 @@ export default function PhoneSvgIcon () {
                 </clipPath>
             </defs>
         </svg>
-    )
-}
+    );
+};

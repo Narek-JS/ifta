@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 import Switch from "@/components/customs/switch";
 import Button from "@/components/customs/button";
 

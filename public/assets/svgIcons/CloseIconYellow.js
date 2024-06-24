@@ -15,4 +15,4 @@ export const CloseIconYellow = () => (
             </clipPath>
         </defs>
     </svg>
-)
+);

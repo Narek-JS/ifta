@@ -1,14 +1,14 @@
+import { SuccessfullyDoneIcon } from "@/public/assets/svgIcons/SuccessfullyDoneIcon";
+import { Fragment } from "react";
+
 import NormalBtn from "@/components/universalUI/NormalBtn";
 
 export default function ExtraFaildReloadPopUp() {
 
     return (
-        <>
+        <Fragment>
             <div className="warningIcon">
-                <svg viewBox="0 0 24 24" width="100%" height="100%" fill="var(--toastify-icon-color-success)">
-                    <path
-                        d="M12 0a12 12 0 1012 12A12.014 12.014 0 0012 0zm6.927 8.2l-6.845 9.289a1.011 1.011 0 01-1.43.188l-4.888-3.908a1 1 0 111.25-1.562l4.076 3.261 6.227-8.451a1 1 0 111.61 1.183z"></path>
-                </svg>
+                <SuccessfullyDoneIcon />
             </div>
             <h2 className="primary font24 m-center">
                 Extra field does not belong to state. Please Reload the Page
@@ -19,6 +19,6 @@ export default function ExtraFaildReloadPopUp() {
             >
                 Reload
             </NormalBtn>
-        </>
-    )
-}
+        </Fragment>
+    );
+};

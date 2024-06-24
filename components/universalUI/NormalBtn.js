@@ -1,4 +1,5 @@
-import {Button, CircularProgress} from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
+import classNames from "classnames";
 
 export default function NormalBtn({
     onClick,
@@ -6,17 +7,22 @@ export default function NormalBtn({
     children,
     loading,
     disabled,
-    type
+    type = 'button'
 }) {
+    const isDisabled = Boolean(loading) || Boolean(disabled);
 
     return (
         <Button
-            disabled={Boolean(loading) || Boolean(disabled)}
+            disabled={isDisabled}
             onClick={onClick}
-            className={`normalBtn ${className || ""}`}
-            type={type || 'button'}
+            className={classNames('normalBtn', { [className]: className })}
+            type={type}
         >
-            {loading ? <CircularProgress style={{ color: "white" }}/> : children}
+            { loading ? (
+                <CircularProgress style={{ color: "white" }} /> 
+            ) : (
+                children
+            )}
         </Button>
-    )
-}
+    );
+};

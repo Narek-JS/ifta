@@ -1,46 +1,129 @@
 import { addOtherExtraFields, clearQarterRowData, selectOtherExtraValues } from "@/store/slices/resgister";
 import { selectQuestionnaireLoadding, setQuestionnaireLoading } from "@/store/slices/questionnaire";
+import { VerificationContext } from "@/contexts/VerificationCarrierInfoContext";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { useContext, useEffect, useRef, useState } from "react";
+import { getExtraFieldValidation } from "@/utils/schemas";
 import { QUARTERLY_FILLING_ID } from "@/utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { useContext, useEffect, useRef, useState } from "react";
+import { TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useFormik } from "formik";
+
 import InputField from "@/components/universalUI/InputField";
 import InputFile from "@/components/universalUI/InputFile";
-import { getExtraFieldValidation } from "@/utils/schemas";
 import * as yup from "yup";
 import dayjs from "dayjs";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { TextField } from "@mui/material";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { VerificationContext } from "@/contexts/VerificationCarrierInfoContext";
+import classNames from "classnames";
 
-export default function Others({
-    permit_id,
-    others,
-    setSubmit,
-    submit,
-    applicationTypeId,
-    stateId,
-    ein
-}) {
-    const dispatch = useDispatch();
+// State ides which has a text extra filed with large lables.
+const WITH_LARGE_LABELS_OF_STATES_ID = [70]; 
+
+// Component to handle text input fields for extra fields.
+const ExtraFieldTextInput = ({ el, formik, name, isRequired }) => {
+    const isSmallSizeCalss = WITH_LARGE_LABELS_OF_STATES_ID.find(id => id === el.state_id);
+    return (
+        <InputField
+            key={el.id}
+            className={classNames({ 'small-size': isSmallSizeCalss })}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values?.[name]}
+            error={formik.touched?.[name] && formik.errors?.[name]}
+            required={el.validation?.length && isRequired}
+            name={name}
+            label={el.label || "[ NO LABEL ]"}
+            placeholder={el.placeholder || "[ NO PLACEHOLDER ]"}
+            type={el.type?.name}
+            mobileLableWrap={true}
+        />
+    );
+};
+
+// Component to handle date input fields for extra fields.
+const ExtraFieldFileInput = ({ el, onChange, formik, fileNames, setFileNames, name }) => (
+    <InputFile
+        key={el.id}
+        onChange={onChange}
+        onBlur={formik.handleBlur}
+        fileName={fileNames[name]}
+        error={formik.touched?.[name] && formik.errors?.[name]}
+        required={el.validation?.length && el.validation[0]?.conditions !== "Not Required"}
+        name={name}
+        label={el.label || "[ NO LABEL ]"}
+        placeholder={el.placeholder || "[ NO PLACEHOLDER ]"}
+        exampleFilePath={el.exampleImagePath}
+        className="memberFile inputField"
+        resetFileName={(e, name) => {
+            e.preventDefault();
+            setFileNames({ ...fileNames, [name]: '' });
+            formik.setValues({ ...formik.values, [name]: '' });
+        }}
+    />
+);
+
+// Component to handle date input fields for extra fields.
+const ExtraFieldDateInput = ({ el, isRequired, formik, name, setExtraDatePicker, extraDatePicker }) => (
+    <div className="dateInput m-year-Input" key={el.id}>
+        <p className="helper mb5 bold500 font16 line24">
+            {el.label || "[ NO LABEL ]"}
+            {el.validation?.length && isRequired ? <sup className="red font16">*</sup> : ""}
+        </p>
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+                value={formik.values?.[name] ? dayjs(formik.values?.[name]) : ''}
+                format="MM/DD/YYYY"
+                open={extraDatePicker?.[name] || false}
+                onOpen={() => setExtraDatePicker({ ...extraDatePicker, [name]: true })}
+                onClose={() => setExtraDatePicker({ ...extraDatePicker, [name]: false })}
+                onChange={value => {
+                    formik.setFieldValue(name, value, true);
+                    setExtraDatePicker({ ...extraDatePicker, [name]: false });
+                }}
+                slotProps={{
+                    textField: { onClick: () => setExtraDatePicker({ ...extraDatePicker, [name]: true })},
+                    actionBar: { actions: ['clear'] }
+                }}
+                minDate={dayjs(String(new Date(`01-01-${new Date().getUTCFullYear() - 80}`)) )}
+                renderInput={(params) => (
+                    <TextField
+                        error={formik.touched?.[name] && formik.errors?.[name]}
+                        label="Birthday"
+                        margin="normal"
+                        name={name}
+                        {...params}
+                    />
+                )}
+            />
+        </LocalizationProvider>
+        <p className="err-message">{formik.touched?.[name] && formik.errors?.[name]}</p>
+    </div>
+);
+
+// Main component to handle others section.
+export default function Others({ permit_id, others, setSubmit, submit, applicationTypeId, stateId, ein }) {
     const router = useRouter();
-    const ref = useRef(null);
+    const dispatch = useDispatch();
+
     const otherExtraValues = useSelector(selectOtherExtraValues);
     const questionnaireLoadding = useSelector(selectQuestionnaireLoadding);
-    const isFile = others?.some(el => el?.type?.name === "file");
-    const [fileNames, setFileNames] = useState({});
-    const [extraDatePicker, setExtraDatePicker] = useState({});
 
+    const [ fileNames, setFileNames ] = useState({});
+    const [ extraDatePicker, setExtraDatePicker ] = useState({});
     const { setLoader, setNextStapeLoading } = useContext(VerificationContext);
 
+    const ref = useRef(null);
+
+    // Initialize extra field values.
     const extraInitialValues = (others || []).reduce((acc, el) => {
         acc[`extra_field_${el.id}`] = "";
         return acc;
     }, {});
 
+    // Initialize validation schema for extra fields.
     const validation = yup.object(
         (others || []).reduce((acc, el) => {
             const extraFieldvalidation = getExtraFieldValidation(el.validation);
@@ -49,11 +132,12 @@ export default function Others({
         }, {})
     );
 
+    // Initialize formik for form handling.
     const formik = useFormik({
-        initialValues: {
-            ...extraInitialValues,
-        },
+        initialValues: { ...extraInitialValues },
+        validationSchema: validation,
         onSubmit: (values, { setErrors }) => {
+            // Check if any file fields are required but not filled.
             const submitFileByEmail = others.reduce((acc, otherExtraField) => {
                 if(otherExtraField?.type?.name === 'file') {
                     const findedExtraValue = values?.[`extra_field_${otherExtraField.id}`];
@@ -64,6 +148,10 @@ export default function Others({
                 return acc;
             }, false);
 
+            // Check if any fields are file type.
+            const isFile = others?.some(el => el?.type?.name === "file");
+
+            // Prepare form data for submission.
             const bodyEntries = Object.entries({
                 ...values,
                 ...(isFile && { submit_file_by_email: submitFileByEmail ? 1 : 0 }),
@@ -73,84 +161,90 @@ export default function Others({
                 EIN: ein,
             });
 
+            // Initialize Form Data for collect form values. 
             const formData = new FormData();
-            
+
+            // Append each entry to formData.
             bodyEntries.forEach(([ key, value ]) => {
-                formData.append(key,(value === 'null' || value === null) ? '' : value);
+                formData.append(key, (value === 'null' || value === null) ? '' : value);
             });
 
+            // Dispatch action to add other extra fields.
             dispatch(addOtherExtraFields(formData)).then(res => {
                 if (res?.payload?.action) {
                     setNextStapeLoading(false);
+
                     if(applicationTypeId === QUARTERLY_FILLING_ID) {
+                        // Redirect to payment page if the permit is quarter and clear quarterly row data.
                         router.push("/form/payment-info");
                         dispatch(clearQarterRowData());
                     } else {
+                        // Redirect to questionnaire page if the permit is not quarter.
                         router.push("/form/questionnaire");
                     };
                 } else {
+                    // Turn off the next step button loading, and questionnaire loading.
                     setNextStapeLoading(false);
                     if(questionnaireLoadding) {
                         dispatch(setQuestionnaireLoading(false));
                     };
 
+                    // Open extra faild popup if any extra faild is change from admin.
                     if(res?.payload?.result?.data?.reload) {
                         dispatch(setPopUp({ popUp: "extraFaild" }))
                     };
 
-                    // check If there are error messages from backend show it unders correct extra faild.
+                    // Check If there are error messages from backend show it unders of correct extra faild.
                     if(res?.payload?.result?.data && Object.keys(res?.payload?.result?.data).length) {
                         let errors = {};
+                        // collect errors for each extra faild and add in errors.
                         for(let invalidFaildKey in res?.payload?.result?.data) {
                             if(extraInitialValues?.[invalidFaildKey] !== undefined && res?.payload?.result?.data?.[invalidFaildKey]?.[0]) {
                                 errors[invalidFaildKey] = res?.payload?.result?.data?.[invalidFaildKey]?.[0];
                             };
                         };
 
-                        setErrors({
-                            ...formik.errors,
-                            ...errors
-                        });
+                        // Update Errors, with old errors what there in formik.
+                        setErrors({ ...formik.errors, ...errors });
 
+                        // Scroll on current section to show section error.
                         ref.current.scrollIntoView({ behavior: "smooth", block: 'center' });
                     } else {
+                        // Show error with window if there is mentioned extra faild name.
                         toast.error(res.payload?.result?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                     };
-
                     setLoader(false);
                 };
             })
         },
-        validationSchema: validation
     });
 
+    // Effect to handle setting initial values from Redux store.
     useEffect(() => {
-        const extraFields = otherExtraValues?.fields;
-        if (extraFields?.length) {
+        if(otherExtraValues?.fields?.length) {
             const fileNamesData = {};
-            const otherExtraValues = extraFields.filter(el => el.relation === "other");
+            const filteredOtherExtraValues = otherExtraValues?.fields.filter(el => el.relation === "other");
 
-            const extraValues = otherExtraValues?.reduce((acc, el) => {
+            const extraValues = filteredOtherExtraValues?.reduce((acc, el) => {
                 acc[`extra_field_${el.extra_field_id}`] = Boolean(el?.is_file === 1 || el?.is_file === "1") ? 'same' : el?.value;
                 fileNamesData[`extra_field_${el.extra_field_id}`] = el?.original_name || '';
                 return acc;
             }, {});
 
             setFileNames(fileNamesData);
-            formik.setValues({
-                ...formik.values,
-                ...extraValues
-            });
-        }
+            formik.setValues({ ...formik.values, ...extraValues });
+        };
     }, [otherExtraValues]);
 
+    // Effect to handle form submission on submit state change.
     useEffect(() => {
         if (submit) {
             formik.handleSubmit();
         };
 
+        // if there is any error, scroll into others section to show errors
         if (Object.values(formik.errors).some(el => el)) {
             setNextStapeLoading(false);
             ref.current.scrollIntoView({ behavior: "smooth" });
@@ -159,55 +253,38 @@ export default function Others({
         setSubmit(false);
     }, [submit]);
 
-    if (!(others || []).length) return null;
-
+    // Handle file input change event.
     const handleFileInputChange = (e) => {
         e.preventDefault();
         let file = e.target.files[0];
 
-        const valid = otherExtraValues.allExtensions.includes(file?.type.split("/")[1]);
-
         if (!file) {
-            formik.setValues({
-                ...formik.values,
-                [e.target.name]: ""
-            });
-            setFileNames({
-                ...fileNames,
-                [e.target.name]: ""
-            });
+            formik.setValues({ ...formik.values, [e.target.name]: "" });
+            setFileNames({ ...fileNames, [e.target.name]: "" });
             return;
         } else {
-            if (!valid) {
-                formik.setErrors({
-                    ...formik.errors,
-                    [e.target.name]: "Invalid file type!"
-                }, false);
-                formik.setTouched({
-                    ...formik.touched,
-                    [e.target.name]: true
-                }, false)
+            // Check if the selected file type is valid.
+            const valid = otherExtraValues.allExtensions.includes(file?.type.split("/")[1]);
+            if(!valid) {
+                // If the file type is invalid, set an error in formik and mark the field as touched.
+                formik.setErrors({ ...formik.errors, [e.target.name]: "Invalid file type!" }, false);
+                formik.setTouched({ ...formik.touched, [e.target.name]: true }, false)
             } else {
-                formik.setErrors({
-                    ...formik.errors,
-                    [e.target.name]: ""
-                });
+                // If the file type is valid, clear any existing errors for this field.
+                formik.setErrors({ ...formik.errors, [e.target.name]: "" });
             };
 
-            setFileNames({
-                ...fileNames,
-                [e.target.name]: file.name,
-                name: file.name
-            });
+            // Update the state with the new file name and formik values.
+            setFileNames({ ...fileNames, [e.target.name]: file.name, name: file.name });
+            formik.setValues({ ...formik.values, [e.target.name]: file }, false);
 
-            formik.setValues({
-                ...formik.values,
-                [e.target.name]: file
-            }, false);
-
+            // Clear the file input value to allow re-uploading the same file if needed.
             e.target.value = '';
         };
     };
+
+    // If there are no fields to display, return null.
+    if (!(others || []).length) return null;
 
     return (
         <div ref={ref} className="others">
@@ -217,113 +294,38 @@ export default function Others({
             <div className="othersMain">
                 <div className="inputsContainer flex wrap alignEnd gap20">
                     {others?.sort((a, b) => a.sort - b.sort).map(el => {
-                        if(el?.type?.name === "file") {
-                            return <InputFile
-                                key={el.id}
-                                onChange={handleFileInputChange}
-                                onBlur={formik.handleBlur}
-                                fileName={fileNames[`extra_field_${el.id}`]}
-                                error={formik.touched?.[`extra_field_${el.id}`] && formik.errors?.[`extra_field_${el.id}`]}
-                                required={el.validation?.length && el.validation[0]?.conditions !== "Not Required"}
-                                name={`extra_field_${el.id}`}
-                                label={el.label || "[ NO LABEL ]"}
-                                placeholder={el.placeholder || "[ NO PLACEHOLDER ]"}
-                                exampleFilePath={el.exampleImagePath}
-                                className="memberFile inputField"
-                                resetFileName={(e, name) => {
-                                    e.preventDefault();
-                                    setFileNames({
-                                        ...fileNames,
-                                        [name]: ''
-                                    });
-                                    formik.setValues({
-                                        ...formik.values,
-                                        [name]: ''
-                                    });
-                                }}
-                            />
+                        const isRequired = el?.validation?.find(val => val.conditions === 'required');
+
+                        switch(el?.type?.name) {
+                            case "file": {
+                                return <ExtraFieldFileInput
+                                    el={el}
+                                    fileNames={fileNames}
+                                    setFileNames={setFileNames}
+                                    formik={formik}
+                                    name={`extra_field_${el.id}`}
+                                    onChange={handleFileInputChange}
+                                />;
+                            };
+                            case "date": {
+                                return <ExtraFieldDateInput
+                                    el={el}
+                                    extraDatePicker={extraDatePicker}
+                                    formik={formik}
+                                    isRequired={isRequired}
+                                    name={`extra_field_${el.id}`}
+                                    setExtraDatePicker={setExtraDatePicker}
+                                />;
+                            };
+                            default: {
+                                return <ExtraFieldTextInput
+                                    el={el}
+                                    formik={formik}
+                                    isRequired={isRequired}
+                                    name={`extra_field_${el.id}`}
+                                />;
+                            };
                         };
-
-                        if(el?.type?.name === "date") {
-                            return <div className="dateInput m-year-Input" key={el.id}>
-                                <p className="helper mb5 bold500 font16 line24">
-                                    {el.label || "[ NO LABEL ]"}
-                                    {el.validation?.length && el.validation?.find(({ conditions }) => conditions === 'required') ? <sup className="red font16">*</sup> : ""}
-                                </p>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker
-                                        value={formik.values?.[`extra_field_${el.id}`] ? dayjs(formik.values?.[`extra_field_${el.id}`]) : ''}
-                                        format="MM/DD/YYYY"
-                                        open={extraDatePicker?.[`extra_field_${el.id}`] || false}
-                                        onOpen={() => setExtraDatePicker({
-                                            ...extraDatePicker,
-                                            [`extra_field_${el.id}`]: true
-                                        })}
-                                        onClose={() => setExtraDatePicker({
-                                            ...extraDatePicker,
-                                            [`extra_field_${el.id}`]: false
-                                        })}
-                                        onChange={value => {
-                                            formik.setFieldValue(`extra_field_${el.id}`, value, true);
-                                            setExtraDatePicker({
-                                                ...extraDatePicker,
-                                                [`extra_field_${el.id}`]: false
-                                            })
-                                        }}
-                                        slotProps={{
-                                            textField: {
-                                                onClick: () => setExtraDatePicker({
-                                                    ...extraDatePicker,
-                                                    [`extra_field_${el.id}`]: true
-                                                })
-                                            },
-                                            actionBar: { actions: ['clear'] }
-                                        }}
-                                        minDate={dayjs(String(new Date(`01-01-${new Date().getUTCFullYear() - 80}`)) )}
-                                        renderInput={(params) => (
-                                            <TextField
-                                                error={formik.touched?.[`extra_field_${el.id}`] && formik.errors?.[`extra_field_${el.id}`]}
-                                                label="Birthday"
-                                                margin="normal"
-                                                name={`extra_field_${el.id}`}
-                                                {...params}
-                                            />
-                                        )}
-                                    />
-                                </LocalizationProvider>
-                                <p className="err-message">{formik.touched?.[`extra_field_${el.id}`] && formik.errors?.[`extra_field_${el.id}`]}</p>
-                            </div>
-                        };
-
-                        return (
-                            <InputField
-                                key={el.id}
-                                className={el.state_id === 70 ? 'small-size' : ''}
-                                onChange={(event) => {
-                                    if(el?.validation?.[0]?.conditions === 'amount') {
-                                        if(event.target.value[0] === '0') return;
-                                        let modifiedValue = event.target.value.replace(/\$/g, '');
-
-                                        if(isNaN(Number(modifiedValue))) return;
-                                        if(modifiedValue.length > 8) return;
-                                        if (modifiedValue !== '') {
-                                            modifiedValue = '$' + modifiedValue;
-                                        };
-                                        event.target.value = modifiedValue;
-                                    };
-                                    formik.handleChange(event);
-                                }}
-                                onBlur={formik.handleBlur}
-                                value={formik.values?.[`extra_field_${el.id}`]}
-                                error={formik.touched?.[`extra_field_${el.id}`] && formik.errors?.[`extra_field_${el.id}`]}
-                                required={el.validation?.length && el.validation?.find(val => val.conditions === 'required')}
-                                name={`extra_field_${el.id}`}
-                                label={el.label || "[ NO LABEL ]"}
-                                placeholder={el.placeholder || "[ NO PLACEHOLDER ]"}
-                                type={el.type?.name}
-                                mobileLableWrap={true}
-                            />
-                        );
                     })}
                 </div>
             </div>

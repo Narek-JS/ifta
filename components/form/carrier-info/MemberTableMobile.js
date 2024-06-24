@@ -1,10 +1,12 @@
 import { useRef } from "react";
-import EditSvgIcon from "@/public/assets/svgIcons/EditSvgIcon";
 import DeleteSvgIcon from "@/public/assets/svgIcons/DeleteSvgIcon";
+import EditSvgIcon from "@/public/assets/svgIcons/EditSvgIcon";
+import classNames from "classnames";
 
-export default function MemberTableMobile({members, handleEdit, handleDelete, loading}) {
+export default function MemberTableMobile({ members, handleEdit, handleDelete, loading }) {
     const sectionEndElmRef = useRef(null);
 
+    // Function to scroll to the end element of the section.
     const scrollIntoEndElem = () => {
         if(sectionEndElmRef.current) {
             sectionEndElmRef.current.scrollIntoView({
@@ -12,6 +14,12 @@ export default function MemberTableMobile({members, handleEdit, handleDelete, lo
                 block: 'center'
             });
         };
+    };
+
+    // Handle edit button click and scroll to the end element.
+    const handleEditClick = () => {
+        handleEdit(el);
+        setTimeout(scrollIntoEndElem, 200);
     };
 
     return (
@@ -25,20 +33,21 @@ export default function MemberTableMobile({members, handleEdit, handleDelete, lo
                     </tr>
                 </thead>
                 <tbody>
-                    {members?.length ?
+                    { members?.length ? (
                         members.map((el, i) => (
                             <tr key={i}>
                                 <td>{el?.officer_type?.name}</td>
                                 <td>{el?.name}</td>
                                 <td>{el?.home_address}</td>
                             </tr>
-                        )) :
+                        ))
+                    ) : (
                         <tr>
                             <td className="font16" colSpan={7}>
                                 Start Adding Owner/Officer Information
                             </td>
                         </tr>
-                    }
+                    )}
                 </tbody>
             </table>
             <table>
@@ -51,7 +60,7 @@ export default function MemberTableMobile({members, handleEdit, handleDelete, lo
                     </tr>
                 </thead>
                 <tbody>
-                    {members?.length ?
+                    { members?.length ? (
                         members.map((el, i) => (
                             <tr key={i}>
                                 <td>{el.city}</td>
@@ -60,28 +69,30 @@ export default function MemberTableMobile({members, handleEdit, handleDelete, lo
                                 <td className="actionsBtns flexCenter alignCenter gap10">
                                     <button
                                         disabled={loading}
-                                        className={`${loading ? "disableBtn": ""}`}
-                                        onClick={() => {
-                                            handleEdit(el);
-                                            setTimeout(scrollIntoEndElem, 200);
-                                        }}
+                                        className={classNames({ disableBtn: loading })}
+                                        onClick={handleEditClick}
                                     >
-                                        <EditSvgIcon/>
+                                        <EditSvgIcon />
                                     </button>
-                                    <button disabled={loading} className={`${loading ? "disableBtn": ""}`} onClick={() => handleDelete(el.id)}>
+                                    <button
+                                        disabled={loading}
+                                        className={classNames({ disableBtn: loading })}
+                                        onClick={() => handleDelete(el.id)}
+                                    >
                                         <DeleteSvgIcon/>
                                     </button>
                                 </td>
                             </tr>
-                        )) :
+                        )) 
+                    ) : (
                         <tr>
                             <td className="font16" colSpan={7}>
                             </td>
                         </tr>
-                    }
+                    )}
                 </tbody>
             </table>
             <p ref={sectionEndElmRef}/>
         </div>
-    )
-}
+    );
+};

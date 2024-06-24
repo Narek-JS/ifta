@@ -26,6 +26,7 @@ const Quarters = () => {
 
     const [expanded, setExpanded] = useState(0);
 
+    // Fetching necessary data on component mount.
     useEffect(() => {
         if(allQuarters === null && allQuartersStatus !== 'failed') {
             dispatch(getAllQuarters({
@@ -46,6 +47,7 @@ const Quarters = () => {
         };
     }, []);
 
+    // Grouping quarters by year using useMemo.
     const allQuartersWithYearGroup = useMemo(() => {
         if(Array.isArray(allQuarters?.data)) {
             return allQuarters.data.reduce((acc, quarter) => {
@@ -61,6 +63,7 @@ const Quarters = () => {
         return {};
     }, [allQuarters]);
 
+    // Function to handle Accordion panel expand/collapse.
     const handleChange = (panel) => () => {
         if(expanded === panel) {
             return setExpanded(false);
@@ -68,10 +71,12 @@ const Quarters = () => {
         setExpanded(panel);
     };
 
+    // Render Loader if quarters data is still loading
     if(allQuartersStatus === 'pending') {
         return <Loader />;
     };
 
+    // Extracting keys from the grouped quarters object
     const keysOfAllQuarters = Object.keys(allQuartersWithYearGroup);
 
     return (

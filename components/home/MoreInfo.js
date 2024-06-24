@@ -6,6 +6,7 @@ import moreInfo from "@/data/moreInfo.js"
 
 export default memo(function MoreInfo () {
 
+    // Mapping through the cards data to create JSX elements.
     const cardsJSX = moreInfo.cards.map((el, i) => (
         <div key={i} className="moreInfoCard">
             <div className="iconTitle flexCenter alignCenter gap10">
@@ -16,6 +17,7 @@ export default memo(function MoreInfo () {
         </div>
     ));
 
+    // Render the MoreInfo component.
     return (
         <div className="moreInfo mPadding">
             <div className="infoHeaders flexColumn alignCenter">

@@ -6,6 +6,7 @@ import { TextField} from "@mui/material";
 import { useDispatch } from "react-redux";
 import { commentSchema } from "@/utils/schemas";
 import { postComment } from "@/store/slices/auth";
+
 import TextMaskCustom from "@/components/universalUI/PhoneMask";
 import NormalBtn from "@/components/universalUI/NormalBtn";
 
@@ -21,20 +22,28 @@ export default function Reply({ id }) {
             comments: ''
         },
         onSubmit: (values, {resetForm}) => {
-            setLoading(true)
+            // Set loading state to true during form submission.
+            setLoading(true);
+
+            // Dispatch action to post comment.
             dispatch(postComment({ ...values, id }))
                 .then(res => {
+                    // Set loading state to false after form submission.
+                    setLoading(false);
+
                     if (res?.payload?.action) {
+                        // Display success message if comment is posted successfully and reset form .
                         toast.success(res.payload?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                         resetForm();
                     } else {
+                        // Display error message if comment post fails.
                         toast.error(res.payload?.result?.message, {
                             position: toast.POSITION.TOP_RIGHT
                         });
                     };
-                    setLoading(false);
+                    
                 });
         },
         validationSchema: commentSchema

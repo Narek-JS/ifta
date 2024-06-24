@@ -8,6 +8,7 @@ import Link from "next/link";
 export default function FAQwrapper({ squares, faqs }){
     const [ expanded, setExpanded ] = useState(false);
 
+    // Function to handle Accordion panel expansion.
     const handleChange = panelIndex => (event, isExpanded) => {
         setExpanded(isExpanded ? panelIndex : false);
     };

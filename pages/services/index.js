@@ -1,6 +1,6 @@
-import Help from "@/components/home/Help";
 import InfoSection from "@/components/universalUI/InfoSection";
-import services from "@/data/services.js"
+import Help from "@/components/home/Help";
+import services from "@/data/services.js";
 
 export default function Services() {
 

@@ -9,6 +9,7 @@ import shopsInfo from "@/data/shopsInfo.js"
 
 export default memo(function Shops() {
 
+    // Map over steps1 array to create JSX for the first list of steps
     const textList1JSX = shopsInfo.steps1.map((text, i) => (
         <li className="flex alignCenter gap5 font16 primary lh4" key={i}>
             <CheckMarkIcon />
@@ -16,6 +17,7 @@ export default memo(function Shops() {
         </li>
     ));
 
+    // Map over steps2 array to create JSX for the second list of steps
     const textList2JSX = shopsInfo.steps2.map((text, i) => (
         <li className="flex alignCenter font16 gap5 primary lh4" key={i}>
             <CheckMarkIcon />
@@ -23,10 +25,11 @@ export default memo(function Shops() {
         </li>
     ));
 
+    // Map over shopsData array to create JSX for each shop's data
     const shopsDataJSX = shopsInfo.shopsData.map((el, i) => (
         <div key={i} className="solutionCard flexColumn alignCenter gap15">
             <div className="flexCenter alignCenter gap5">
-                <div style={{ maxHeight: '55px' }} dangerouslySetInnerHTML={{__html: el.icon}}></div>
+                <div className="max-h-55" dangerouslySetInnerHTML={{__html: el.icon}}></div>
                 <p className="lighthouse-black font20 weight500 line34">{el.title} </p>
             </div>
             <p className="lighthouse-black-80">{el?.content}</p>
@@ -38,6 +41,7 @@ export default memo(function Shops() {
         </div>
     ));
 
+    // Return the JSX structure for the Shops component
     return (
         <div className="shops mPadding">
             <div className="shopsMain">

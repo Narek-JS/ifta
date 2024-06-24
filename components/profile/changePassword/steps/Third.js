@@ -1,21 +1,26 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { checkVerificationCode } from "@/store/slices/profile";
-import CodeFiling from "@/components/profile/codeFiling";
-import NormalBtn from "@/components/universalUI/NormalBtn";
+
 import BackSvgIcon from "@/public/assets/svgIcons/BackSvgIcon";
+import NormalBtn from "@/components/universalUI/NormalBtn";
+import CodeFiling from "@/components/profile/codeFiling";
+import classNames from 'classnames';
 
 const Third = ({ setStep, step, onClick, category }) => {
     const dispatch = useDispatch();
     const [code, setCode] = useState('');
 
+    // Function to handle form submission.
     const onSubmit = () => {
         dispatch(checkVerificationCode({code}))
             .then(res => {
                 if(res.payload.action) {
+                    // If verification code is correct, move to the next step.
                     setStep(4);
                 } else {
+                    // If verification code is incorrect, display error message.
                     toast.error(res.payload?.result?.message);
                     setCode('');
                 };
@@ -42,7 +47,7 @@ const Third = ({ setStep, step, onClick, category }) => {
             <CodeFiling code={code} setCode={setCode} />
             <div className='btn-field'>
                 <NormalBtn
-                    className={`bg-lighthouse-black ${code ? '' : 'disableBtn'}`}
+                    className={classNames('bg-lighthouse-black', { disableBtn: !code })}
                     type='button'
                     onClick={onSubmit}
                 >
