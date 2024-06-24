@@ -43,7 +43,7 @@ export default function Layout({ children }) {
             const isUpdate = localStorage.getItem('isUpdate');
 
             // if that popup is never open, and user is auth.
-            if(!isUpdate && user) {
+            if(!isUpdate && !user) {
                 dispatch(setPopUp({
                     popUp: "updatedPopup",
                     popUpAction: () => {
