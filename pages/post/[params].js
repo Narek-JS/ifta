@@ -187,7 +187,7 @@ export default function SinglePost({ postData, latestPostsData }) {
 }
 
 // Fetch data on the server-side
-export async function getServerSideProps(context) {
+async function getServerSideProps(context) {
   const { slug, category_id } = context.query;
   // Fetch single post data
   const postResponse = await fetch(`${API_URL}/posts/${slug}`);
