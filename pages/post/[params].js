@@ -187,7 +187,7 @@ export default function SinglePost({ postData, latestPostsData }) {
 }
 
 // Fetch data on the server-side
-async function getServerSideProps(context) {
+export const getServerSideProps = (async (context) => {
   const { slug, category_id } = context.query;
   // Fetch single post data
   const postResponse = await fetch(`${API_URL}/posts/${slug}`);
@@ -204,4 +204,4 @@ async function getServerSideProps(context) {
       latestPostsData: latestPostsData.data
     }
   };
-}
+});
